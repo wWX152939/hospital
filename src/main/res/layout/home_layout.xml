@@ -13,7 +13,7 @@
         android:id="@android:id/tabhost"
         android:layout_gravity="bottom"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/tabhost_bg" />
+        android:layout_height="wrap_content" />
+    <!--android:background="@drawable/tabhost_bg"-->
 
 </FrameLayout>

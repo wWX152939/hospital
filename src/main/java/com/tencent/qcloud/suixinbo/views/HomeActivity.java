@@ -54,7 +54,33 @@ public class HomeActivity extends BaseFragmentActivity implements ProfileView {
         mTabHost.setup(this, getSupportFragmentManager(), R.id.contentPanel);
 
         int fragmentCount = fragmentArray.length;
+
+        // wzw 注释掉publish
+//        for (int i = 0; i < fragmentCount; i++) {
+//            //为每一个Tab按钮设置图标、文字和内容
+//            TabHost.TabSpec tabSpec = mTabHost.newTabSpec(mTextviewArray[i]).setIndicator(getTabItemView(i));
+//            //将Tab按钮添加进Tab选项卡中
+//            mTabHost.addTab(tabSpec, fragmentArray[i], null);
+//            mTabHost.getTabWidget().setDividerDrawable(null);
+//
+//        }
+//        mTabHost.getTabWidget().getChildTabViewAt(1).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+////                DialogFragment newFragment = InputDialog.newInstance();
+////                newFragment.show(ft, "dialog");
+//
+//                startActivity(new Intent(HomeActivity.this, PublishLiveActivity.class));
+//
+//            }
+//        });
+
+        // wzw publish隐藏
         for (int i = 0; i < fragmentCount; i++) {
+            if (i == 1) {
+                continue;
+            }
             //为每一个Tab按钮设置图标、文字和内容
             TabHost.TabSpec tabSpec = mTabHost.newTabSpec(mTextviewArray[i]).setIndicator(getTabItemView(i));
             //将Tab按钮添加进Tab选项卡中
@@ -62,17 +88,9 @@ public class HomeActivity extends BaseFragmentActivity implements ProfileView {
             mTabHost.getTabWidget().setDividerDrawable(null);
 
         }
-        mTabHost.getTabWidget().getChildTabViewAt(1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//                DialogFragment newFragment = InputDialog.newInstance();
-//                newFragment.show(ft, "dialog");
 
-                startActivity(new Intent(HomeActivity.this, PublishLiveActivity.class));
-
-            }
-        });
+        // wzw 隐藏tabwidget
+        mTabHost.getTabWidget().setVisibility(View.GONE);
 
         // 检测是否需要获取头像
         if (TextUtils.isEmpty(MySelfInfo.getInstance().getAvatar())) {

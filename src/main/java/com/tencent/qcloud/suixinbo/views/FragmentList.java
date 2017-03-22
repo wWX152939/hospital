@@ -36,10 +36,15 @@ public class FragmentList extends Fragment implements TabHost.OnTabChangeListene
                         .setIndicator(getTabView(getString(R.string.str_record))),
                 FragmentRecordList.class,
                 null);
+
+        // wzw 隐藏tab页
+        tabHost.getTabWidget().setVisibility(View.GONE);
+
         tabHost.setCurrentTabByTag("Live");
         tabHost.getTabWidget().setDividerDrawable(null);
 //        updateTab(tabHost);
         tabHost.setOnTabChangedListener(this);
+
         return view;
     }
 
