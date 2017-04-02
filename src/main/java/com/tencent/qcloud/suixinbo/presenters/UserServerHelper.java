@@ -36,19 +36,38 @@ import okhttp3.Response;
 public class UserServerHelper {
     private static final String TAG = UserServerHelper.class.getSimpleName();
     private static UserServerHelper instance = null;
-    public static final String REGISTER = "https://sxb.qcloud.com/sxb/index.php?svc=account&cmd=regist";
-    public static final String LOGIN = "https://sxb.qcloud.com/sxb/index.php?svc=account&cmd=login";
-    public static final String LOGOUT = "https://sxb.qcloud.com/sxb/index.php?svc=account&cmd=logout";
-    public static final String APPLY_CREATE_ROOM ="https://sxb.qcloud.com/sxb/index.php?svc=live&cmd=create";
-    public static final String REPORT_ROOM_INFO ="https://sxb.qcloud.com/sxb/index.php?svc=live&cmd=reportroom";
-    public static final String HEART_BEAT =" https://sxb.qcloud.com/sxb/index.php?svc=live&cmd=heartbeat";
-    public static final String STOP_ILIVE ="https://sxb.qcloud.com/sxb/index.php?svc=live&cmd=exitroom";
-    public static final String GET_ROOMLIST ="https://sxb.qcloud.com/sxb/index.php?svc=live&cmd=roomlist";
-    public static final String REPORT_ME ="https://sxb.qcloud.com/sxb/index.php?svc=live&cmd=reportmemid";
-    public static final String GET_MEMLIST ="https://sxb.qcloud.com/sxb/index.php?svc=live&cmd=roomidlist";
+//    public static final String BASE_URL = "https://sxb.qcloud.com/sxb/index.php?";
+    // 注册 登录 创建房间 上报创建房结果 拉去直播房间列表 上报进入房间信息 拉取房间成员列表
+    public static final String BASE_URL = "http://www.yihucloud.com/liver/index.php?";
+
+    // 注册
+    public static final String REGISTER = BASE_URL + "svc=account&cmd=regist";
+
+    //登录
+    public static final String LOGIN = BASE_URL + "svc=account&cmd=login";
+    public static final String LOGOUT = BASE_URL + "svc=account&cmd=logout";
+
+    //创建房间
+    public static final String APPLY_CREATE_ROOM = BASE_URL + "svc=live&cmd=create";
+
+    // 上报房间结果
+    public static final String REPORT_ROOM_INFO = BASE_URL + "svc=live&cmd=reportroom";
+
+    public static final String HEART_BEAT = BASE_URL + "svc=live&cmd=heartbeat";
+    public static final String STOP_ILIVE = BASE_URL + "svc=live&cmd=exitroom";
+
+    // 拉取直播房间列表
+    public static final String GET_ROOMLIST = BASE_URL + "svc=live&cmd=roomlist";
+
+    //上报进入房间信息
+    public static final String REPORT_ME = BASE_URL + "svc=live&cmd=reportmemid";
+
+    //拉取房间成员列表
+    public static final String GET_MEMLIST = BASE_URL + "svc=live&cmd=roomidlist";
+
     public static final String REPORT_RECORD ="https://sxb.qcloud.com/sxb/index.php?svc=live&cmd=reportrecord";
     public static final String GET_REOCORDLIST ="https://sxb.qcloud.com/sxb/index.php?svc=live&cmd=recordlist";
-    public static final String GET_PLAYERLIST ="https://sxb.qcloud.com/sxb/index.php?svc=live&cmd=livestreamlist";
+    public static final String GET_PLAYERLIST = BASE_URL + "svc=live&cmd=livestreamlist";
     public static final String GET_ROOM_PLAYURL ="https://sxb.qcloud.com/sxb/index.php?svc=live&cmd=getroomplayurl";
     public static final String GET_COS_SIG = "https://sxb.qcloud.com/sxb/index.php?svc=cos&cmd=get_sign";
 
@@ -184,7 +203,8 @@ public class UserServerHelper {
     public RequestBackInfo logoutId(String id) {
         try {
             JSONObject jasonPacket = new JSONObject();
-            jasonPacket.put("id", id);
+            // liqiang 登出不需要id
+//            jasonPacket.put("id", id);
             jasonPacket.put("token", MySelfInfo.getInstance().getToken());
             String json = jasonPacket.toString();
             String res = post(LOGOUT, json);
@@ -287,9 +307,14 @@ public class UserServerHelper {
     public RequestBackInfo heartBeater (int role) {
         try {
             JSONObject jasonPacket = new JSONObject();
-            jasonPacket.put("role", role);
+
+            // liqiang 1 主播 0 观众 2 上麦观众
+//            jasonPacket.put("role", role);
+            jasonPacket.put("role", 0);
             jasonPacket.put("token", MySelfInfo.getInstance().getToken());
             jasonPacket.put("roomnum", MySelfInfo.getInstance().getMyRoomNum());
+
+            //点赞数
             jasonPacket.put("thumbup",CurLiveInfo.getAdmires());
             String json = jasonPacket.toString();
             String res = post(HEART_BEAT, json);
@@ -339,11 +364,6 @@ public class UserServerHelper {
         return null;
     }
 
-
-
-
-
-
     /**
      * 通知UserServer结束房间
      */
@@ -378,8 +398,15 @@ public class UserServerHelper {
 
             jasonPacket.put("token", MySelfInfo.getInstance().getToken());
             jasonPacket.put("roomnum", CurLiveInfo.getRoomNum());
-            jasonPacket.put("id", MySelfInfo.getInstance().getId());
-            jasonPacket.put("role", role);
+
+            // liqiang 不需要该字段
+//            jasonPacket.put("id", MySelfInfo.getInstance().getId());
+
+            // 李强，修改role 原代码逻辑后天判断 主播1 成员0 上麦成员2
+//            jasonPacket.put("role", role);
+            jasonPacket.put("role", 0);
+
+            //0 进入房间 1 退出房间上报
             jasonPacket.put("operate", action);
 
             String json = jasonPacket.toString();
@@ -578,26 +605,6 @@ public class UserServerHelper {
         }
         return null;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public String getCosSig() {
         try {

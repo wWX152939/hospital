@@ -55,7 +55,17 @@
             android:layout_marginBottom="@dimen/tencent_tls_ui_edittext_margin"
             android:background="@drawable/tencent_tls_ui_rounded_rectangle_normal"
             android:singleLine="true"
-            android:hint="用户名为4~24个字符，不能为纯数字"/>
+            android:hint="请输入手机号"/>
+
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/tencent_tls_ui_edittext_height"
+            android:paddingLeft="@dimen/tencent_tls_ui_edittext_leftpadding"
+            android:layout_marginBottom="@dimen/tencent_tls_ui_edittext_margin"
+            android:background="@drawable/tencent_tls_ui_rounded_rectangle_normal"
+            android:singleLine="true"
+            android:hint="请输入邮箱"/>
 
         <EditText
             android:id="@+id/password"

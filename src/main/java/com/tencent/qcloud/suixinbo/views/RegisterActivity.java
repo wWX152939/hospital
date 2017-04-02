@@ -1,5 +1,7 @@
 package com.tencent.qcloud.suixinbo.views;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -89,7 +91,29 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void loginSucc() {
-        jumpIntoHomeActivity();
+        // wzw 登录成功判断邀请码
+        final EditText et = new EditText(this);
+        new AlertDialog.Builder(this)
+                .setTitle("请输入邀请码")
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .setView(et)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (et.getText().toString().equals("1234")) {
+                            jumpIntoHomeActivity();
+                        } else {
+                            Toast.makeText(RegisterActivity.this, "邀请码不正确，请重新输入！", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
     }
 
     @Override

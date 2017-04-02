@@ -39,7 +39,7 @@
             android:layout_marginBottom="@dimen/tencent_tls_ui_edittext_margin"
             android:background="@drawable/tencent_tls_ui_rounded_rectangle_normal"
             android:singleLine="true"
-            android:hint="用户名"/>
+            android:hint="手机号/邮箱"/>
 
         <EditText
             android:id="@+id/password"
@@ -61,12 +61,19 @@
             android:layout_marginBottom="20dp"
             android:textSize="@dimen/tencent_tls_ui_buttonFontSize"
             android:textColor="@color/tencent_tls_ui_white"
-            android:text="登录"/>
+            android:text="开启健康之旅"/>
 
         <FrameLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
 
+            <TextView
+                android:id="@+id/loginWeixin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|left"
+                android:textColor="@color/tencent_tls_ui_defaultButtonColor"
+                android:text="微信登录"/>
 
             <TextView
                 android:id="@+id/registerNewUser"

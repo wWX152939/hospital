@@ -123,6 +123,11 @@
             <!--android:name="com.tencent.qalsdk.service.QalService"-->
             <!--android:exported="false"-->
             <!--android:process=":QALSERVICE" />-->
+        <!--<service-->
+            <!--android:name="com.tencent.qalsdk.service.QalAssistService"-->
+            <!--android:exported="false"-->
+            <!--android:process=":QALSERVICE" >-->
+        <!--</service>-->
 
         <!--<receiver-->
             <!--android:name="com.tencent.qalsdk.QALBroadcastReceiver"-->
