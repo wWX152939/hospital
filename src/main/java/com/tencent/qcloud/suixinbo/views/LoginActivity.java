@@ -42,13 +42,18 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         checkPermission();
         //获取个人数据本地缓存
         MySelfInfo.getInstance().getCache(getApplicationContext());
-        if (needLogin() == true) {//本地没有账户需要登录
-            initView();
-        } else {
-            //有账户登录直接IM登录
-            SxbLog.i(TAG, "LoginActivity onCreate");
-            mLoginHeloper.iLiveLogin(MySelfInfo.getInstance().getId(), MySelfInfo.getInstance().getUserSig());
+//        if (needLogin() == true) {//本地没有账户需要登录
+//            initView();
+//        } else {
+//            //有账户登录直接IM登录
+//            SxbLog.i(TAG, "LoginActivity onCreate");
+//            mLoginHeloper.iLiveLogin(MySelfInfo.getInstance().getId(), MySelfInfo.getInstance().getUserSig());
+//        }
+
+        if (needLogin() == false) {
+
         }
+        initView();
 
         // 初始化直播模块
 /*        ILVLiveConfig liveConfig = new ILVLiveConfig();
@@ -126,36 +131,42 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void loginSucc() {
-
-        // wzw 登录成功判断邀请码
-        final EditText et = new EditText(this);
-        new AlertDialog.Builder(this)
-                .setTitle("请输入邀请码")
-                .setIcon(android.R.drawable.ic_dialog_info)
-                .setView(et)
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (et.getText().toString().equals("1234")) {
-                            Toast.makeText(LoginActivity.this, "" + MySelfInfo.getInstance().getId() + " login ", Toast.LENGTH_SHORT).show();
-                            jumpIntoHomeActivity();
-                        } else {
-                            Toast.makeText(LoginActivity.this, "邀请码不正确，请重新输入！", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                })
-                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .show();
+        Toast.makeText(LoginActivity.this, "" + MySelfInfo.getInstance().getId() + " login ", Toast.LENGTH_SHORT).show();
+        jumpIntoHomeActivity();
     }
 
     @Override
     public void loginFail(String mode,int code ,String errorinfo) {
-        Toast.makeText(LoginActivity.this, "login fail" + MySelfInfo.getInstance().getId() + " : "+errorinfo, Toast.LENGTH_SHORT).show();
+        if (code == 30003) {
+            // wzw 登录成功判断邀请码
+            final EditText et = new EditText(this);
+            new AlertDialog.Builder(this)
+                    .setTitle("请输入邀请码")
+                    .setIcon(android.R.drawable.ic_dialog_info)
+                    .setView(et)
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            mLoginHeloper.checkYQM(mUserName.getText().toString(), mPassWord.getText().toString(), et.getText().toString());
+//                            if (et.getText().toString().equals("1234")) {
+//
+//                            } else {
+//                                Toast.makeText(LoginActivity.this, "邀请码不正确，请重新输入！", Toast.LENGTH_SHORT).show();
+//                            }
+                        }
+                    })
+                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+        } else {
+            Toast.makeText(LoginActivity.this, "login fail" + " code:" + code + " user:" + MySelfInfo.getInstance().getId() + " : "+errorinfo, Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     void checkPermission() {

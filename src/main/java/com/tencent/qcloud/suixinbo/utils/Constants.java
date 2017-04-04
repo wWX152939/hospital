@@ -42,6 +42,7 @@ public class Constants {
 //    public static final int ACCOUNT_TYPE = 8970;
 
 
+    // liqiang
     public static final int SDK_APPID = 1400027577;
     public static final int ACCOUNT_TYPE = 11435;
 

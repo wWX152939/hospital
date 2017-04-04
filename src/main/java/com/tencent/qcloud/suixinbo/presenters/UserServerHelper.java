@@ -43,6 +43,9 @@ public class UserServerHelper {
     // 注册
     public static final String REGISTER = BASE_URL + "svc=account&cmd=regist";
 
+    // 验证邀请码
+    public static final String CHECK_YQM = BASE_URL + "svc=code&cmd=check";
+
     //登录
     public static final String LOGIN = BASE_URL + "svc=account&cmd=login";
     public static final String LOGOUT = BASE_URL + "svc=account&cmd=logout";
@@ -164,6 +167,44 @@ public class UserServerHelper {
     }
 
     /**
+     * 验证邀请码
+     */
+    public RequestBackInfo checkyqm(String id, String password, String code) {
+        try {
+            JSONObject jasonPacket = new JSONObject();
+            jasonPacket.put("id", id);
+            jasonPacket.put("pwd", password);
+            jasonPacket.put("code", code);
+            String json = jasonPacket.toString();
+            String res = post(CHECK_YQM, json);
+            JSONTokener jsonParser = new JSONTokener(res);
+            JSONObject response = (JSONObject) jsonParser.nextValue();
+            int ret_code = response.getInt("errorCode");
+            String errorInfo = response.getString("errorInfo");
+
+            if (ret_code == 0) {
+                JSONObject data = response.getJSONObject("data");
+
+                Sig = data.getString("userSig");
+                token = data.getString("token");
+                Integer role = data.getInt("role");
+                MySelfInfo.getInstance().setId(id);
+                MySelfInfo.getInstance().setUserSig(Sig);
+                MySelfInfo.getInstance().setToken(token);
+                MySelfInfo.getInstance().setRole(role);
+
+            }
+
+            return new RequestBackInfo(ret_code, errorInfo);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
      * 登录ID （独立方式）
      */
     public RequestBackInfo loginId(String id, String password) {
@@ -183,9 +224,11 @@ public class UserServerHelper {
 
                 Sig = data.getString("userSig");
                 token = data.getString("token");
+                Integer role = data.getInt("role");
                 MySelfInfo.getInstance().setId(id);
                 MySelfInfo.getInstance().setUserSig(Sig);
                 MySelfInfo.getInstance().setToken(token);
+                MySelfInfo.getInstance().setRole(role);
 
             }
             return new RequestBackInfo(code, errorInfo);
@@ -309,8 +352,8 @@ public class UserServerHelper {
             JSONObject jasonPacket = new JSONObject();
 
             // liqiang 1 主播 0 观众 2 上麦观众
-//            jasonPacket.put("role", role);
-            jasonPacket.put("role", 0);
+            jasonPacket.put("role", role);
+//            jasonPacket.put("role", 0);
             jasonPacket.put("token", MySelfInfo.getInstance().getToken());
             jasonPacket.put("roomnum", MySelfInfo.getInstance().getMyRoomNum());
 
@@ -402,9 +445,9 @@ public class UserServerHelper {
             // liqiang 不需要该字段
 //            jasonPacket.put("id", MySelfInfo.getInstance().getId());
 
-            // 李强，修改role 原代码逻辑后天判断 主播1 成员0 上麦成员2
-//            jasonPacket.put("role", role);
-            jasonPacket.put("role", 0);
+            // 李强，修改role  主播1 成员0 上麦成员2
+            jasonPacket.put("role", role);
+//            jasonPacket.put("role", 0);
 
             //0 进入房间 1 退出房间上报
             jasonPacket.put("operate", action);

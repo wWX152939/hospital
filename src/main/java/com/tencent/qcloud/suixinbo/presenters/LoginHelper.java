@@ -44,7 +44,11 @@ public class LoginHelper extends Presenter {
         @Override
         protected UserServerHelper.RequestBackInfo doInBackground(String... strings) {
 
-            return UserServerHelper.getInstance().loginId(strings[0], strings[1]);
+            if (strings.length == 3) {
+                return UserServerHelper.getInstance().checkyqm(strings[0], strings[1], strings[2]);
+            } else {
+                return UserServerHelper.getInstance().loginId(strings[0], strings[1]);
+            }
         }
 
         @Override
@@ -109,6 +113,15 @@ public class LoginHelper extends Presenter {
     public void standardLogin(String id, String password) {
         loginTask = new StandardLoginTask();
         loginTask.execute(id, password);
+
+    }
+
+    /**
+     * 验证邀请码
+     */
+    public void checkYQM(String id, String password, String code) {
+        loginTask = new StandardLoginTask();
+        loginTask.execute(id, password, code);
 
     }
 

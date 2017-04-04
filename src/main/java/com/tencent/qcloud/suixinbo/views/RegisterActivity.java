@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.tencent.qcloud.suixinbo.QavsdkApplication;
 import com.tencent.qcloud.suixinbo.R;
+import com.tencent.qcloud.suixinbo.model.MySelfInfo;
 import com.tencent.qcloud.suixinbo.presenters.LoginHelper;
 import com.tencent.qcloud.suixinbo.presenters.viewinface.LoginView;
 import com.tencent.qcloud.suixinbo.views.customviews.BaseActivity;
@@ -91,34 +92,42 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void loginSucc() {
-        // wzw 登录成功判断邀请码
-        final EditText et = new EditText(this);
-        new AlertDialog.Builder(this)
-                .setTitle("请输入邀请码")
-                .setIcon(android.R.drawable.ic_dialog_info)
-                .setView(et)
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (et.getText().toString().equals("1234")) {
-                            jumpIntoHomeActivity();
-                        } else {
-                            Toast.makeText(RegisterActivity.this, "邀请码不正确，请重新输入！", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                })
-                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .show();
+        Toast.makeText(RegisterActivity.this, "" + MySelfInfo.getInstance().getId() + " login ", Toast.LENGTH_SHORT).show();
+        jumpIntoHomeActivity();
     }
 
     @Override
     public void loginFail(String module, int errCode, String errMsg) {
         Toast.makeText(this, "code "+errCode+"     "+errMsg , Toast.LENGTH_SHORT).show();
+        if (errCode == 30003) {
+            // wzw 登录成功判断邀请码
+            final EditText et = new EditText(this);
+            new AlertDialog.Builder(this)
+                    .setTitle("请输入邀请码")
+                    .setIcon(android.R.drawable.ic_dialog_info)
+                    .setView(et)
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            mLoginHeloper.checkYQM(mUserName.getText().toString(), mPassword.getText().toString(), et.getText().toString());
+//                            if (et.getText().toString().equals("1234")) {
+//
+//                            } else {
+//                                Toast.makeText(LoginActivity.this, "邀请码不正确，请重新输入！", Toast.LENGTH_SHORT).show();
+//                            }
+                        }
+                    })
+                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+        } else {
+            Toast.makeText(this, "code "+errCode+"     "+errMsg , Toast.LENGTH_SHORT).show();
+        }
 
     }
 

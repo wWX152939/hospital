@@ -16,6 +16,9 @@ public class MySelfInfo {
     private String nickName;    // 呢称
     private String avatar;      // 头像
     private String sign;      // 签名
+
+    // liqiang 0 普通用户 10 专家 100 管理员
+    private Integer role;
     private String CosSig;
     private static boolean isCreateRoom = false;
 
@@ -42,6 +45,14 @@ public class MySelfInfo {
     public static MySelfInfo getInstance() {
 
         return ourInstance;
+    }
+
+    public Integer getRole() {
+        return role;
+    }
+
+    public void setRole(Integer role) {
+        this.role = role;
     }
 
     public String getId() {

@@ -397,7 +397,6 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
         mFullControllerUi = (FrameLayout) findViewById(R.id.controll_ui);
 
         pushBtn = (TextView) findViewById(R.id.push_btn);
-        pushBtn.setVisibility(View.VISIBLE);
         pushBtn.setOnClickListener(this);
 
         recordBtn = (TextView) findViewById(R.id.record_btn);
