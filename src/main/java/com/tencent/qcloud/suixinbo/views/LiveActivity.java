@@ -42,8 +42,6 @@ import com.bumptech.glide.RequestManager;
 import com.tencent.TIMMessage;
 import com.tencent.TIMUserProfile;
 import com.tencent.av.TIMAvManager;
-import com.tencent.av.sdk.AVAudioCtrl;
-import com.tencent.av.sdk.AVVideoCtrl;
 import com.tencent.av.sdk.AVView;
 import com.tencent.ilivesdk.ILiveCallBack;
 import com.tencent.ilivesdk.ILiveConstants;
@@ -86,14 +84,11 @@ import com.tencent.qcloud.suixinbo.views.customviews.MembersDialog;
 import com.tencent.qcloud.suixinbo.views.customviews.SpeedTestDialog;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import cn.sharesdk.framework.Platform;
-import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
 
@@ -168,6 +163,7 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);   // 不锁屏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);//去掉信息栏
         setContentView(R.layout.activity_live);
+
         checkPermission();
 
         mLiveHelper = new LiveHelper(this, this);
@@ -175,12 +171,19 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
 
         initView();
         backGroundId = CurLiveInfo.getHostID();
+
+        requestExpertList();
         //进入房间流程
         mLiveHelper.startEnterRoom();
         //初始化社会化分享组件
         ShareSDK.initSDK(this);
     }
 
+    private void requestExpertList() {
+        Log.i("wzw", "wzw requestExpertList");
+        UserServerHelper.getInstance().requestExpertList(MySelfInfo.getInstance().getToken(), CurLiveInfo.getRoomNum());
+        Log.i("wzw", "wzw out requestExpertList");
+    }
 
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
@@ -400,7 +403,9 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
         pushBtn.setOnClickListener(this);
 
         recordBtn = (TextView) findViewById(R.id.record_btn);
-        recordBtn.setVisibility(View.VISIBLE);
+
+        // wzw recordbtn gone
+        recordBtn.setVisibility(View.GONE);
         recordBtn.setOnClickListener(this);
 
         initPushDialog();

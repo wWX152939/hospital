@@ -1,6 +1,8 @@
 package com.tencent.qcloud.suixinbo.model;
 
 
+import java.util.List;
+
 /**
  * 当前直播信息页面
  */
@@ -10,6 +12,8 @@ public class CurLiveInfo {
     private static String title;
     private static double lat1;
     private static double long1;
+
+    private static List<MemberID> expertList;
     private static String address = "";
     private static String coverurl = "";
 
@@ -23,6 +27,13 @@ public class CurLiveInfo {
 
     public static int currentRequestCount = 0;
 
+    public static List<MemberID> getExpertList() {
+        return expertList;
+    }
+
+    public static void setExpertList(List<MemberID> expertList) {
+        CurLiveInfo.expertList = expertList;
+    }
     public static int getCurrentRequestCount() {
         return currentRequestCount;
     }

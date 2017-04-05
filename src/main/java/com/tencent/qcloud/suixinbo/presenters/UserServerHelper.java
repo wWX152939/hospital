@@ -40,6 +40,9 @@ public class UserServerHelper {
     // 注册 登录 创建房间 上报创建房结果 拉去直播房间列表 上报进入房间信息 拉取房间成员列表
     public static final String BASE_URL = "http://www.yihucloud.com/liver/index.php?";
 
+    // 请求专家列表
+    public static final String REQUEST_EXPERT = BASE_URL + "svc=live&cmd=roomexpertslist";
+
     // 注册
     public static final String REGISTER = BASE_URL + "svc=account&cmd=regist";
 
@@ -139,6 +142,40 @@ public class UserServerHelper {
         } else {
             return "";
         }
+    }
+
+    public void requestExpertList(final String token, final int roomNum) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Log.i("wzw", "wzw token:" + token + " roomNum:" + roomNum);
+                    JSONObject jasonPacket = new JSONObject();
+                    jasonPacket.put("token", token);
+                    jasonPacket.put("roomnum", roomNum);
+                    String json = jasonPacket.toString();
+                    String res = post(REQUEST_EXPERT, json);
+                    JSONTokener jsonParser = new JSONTokener(res);
+                    JSONObject response = (JSONObject) jsonParser.nextValue();
+                    int code = response.getInt("errorCode");
+                    String errorInfo = response.getString("errorInfo");
+
+                    Log.i("wzw", "wzw code:" + code);
+                    if(code == 0){
+                        JSONObject data = response.getJSONObject("data");
+                        JSONArray record = data.getJSONArray("idlist");
+                        Type listType = new TypeToken<ArrayList<MemberID>>() {}.getType();
+                        ArrayList<MemberID> result = new Gson().fromJson(record.toString(), listType);
+                        ILiveLog.i(TAG,"size"+result.size());
+                        CurLiveInfo.setExpertList(result);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
 

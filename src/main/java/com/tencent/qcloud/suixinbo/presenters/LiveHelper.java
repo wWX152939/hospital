@@ -201,6 +201,9 @@ public class LiveHelper extends Presenter implements ILiveRoomOption.onRoomDisco
             public void onSuccess(Object data) {
                 ILiveLog.d(TAG, "ILVB-SXB|quitRoom->success");
                 CurLiveInfo.setCurrentRequestCount(0);
+
+                // wzw add
+                CurLiveInfo.setExpertList(null);
                 //通知结束
                 NotifyServerLiveTask();
                 if (null != mLiveView) {

@@ -50,10 +50,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 //            mLoginHeloper.iLiveLogin(MySelfInfo.getInstance().getId(), MySelfInfo.getInstance().getUserSig());
 //        }
 
-        if (needLogin() == false) {
-
-        }
         initView();
+        mUserName.setText(MySelfInfo.getInstance().getId());
+        mPassWord.setText("1");
 
         // 初始化直播模块
 /*        ILVLiveConfig liveConfig = new ILVLiveConfig();
