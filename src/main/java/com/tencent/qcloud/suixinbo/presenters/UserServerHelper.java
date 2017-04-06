@@ -9,8 +9,10 @@ import com.tencent.ilivesdk.core.ILiveLog;
 import com.tencent.qcloud.suixinbo.model.CurLiveInfo;
 import com.tencent.qcloud.suixinbo.model.MemberID;
 import com.tencent.qcloud.suixinbo.model.MySelfInfo;
+import com.tencent.qcloud.suixinbo.model.PPTEntity;
 import com.tencent.qcloud.suixinbo.model.RecordInfo;
 import com.tencent.qcloud.suixinbo.model.RoomInfoJson;
+import com.tencent.qcloud.suixinbo.presenters.viewinface.PPTListView;
 import com.tencent.qcloud.suixinbo.utils.Constants;
 
 import org.json.JSONArray;
@@ -42,6 +44,9 @@ public class UserServerHelper {
 
     // 请求专家列表
     public static final String REQUEST_EXPERT = BASE_URL + "svc=live&cmd=roomexpertslist";
+
+    // 请求PPT列表
+    public static final String REQUEST_PPT = BASE_URL + "svc=ppt&cmd=list";
 
     // 注册
     public static final String REGISTER = BASE_URL + "svc=account&cmd=regist";
@@ -168,6 +173,46 @@ public class UserServerHelper {
                         ArrayList<MemberID> result = new Gson().fromJson(record.toString(), listType);
                         ILiveLog.i(TAG,"size"+result.size());
                         CurLiveInfo.setExpertList(result);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public void requestPPTList(PPTListView pptInterface, String token) {
+        requestPPTList(pptInterface, token, 0, 10);
+    }
+
+    public void requestPPTList(final PPTListView pptInterface, final String token, final int index, final int size) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Log.i("wzw", "wzw requestPPTList token:" + token);
+                    JSONObject jasonPacket = new JSONObject();
+                    jasonPacket.put("token", token);
+                    jasonPacket.put("index", index);
+                    jasonPacket.put("size", size);
+                    String json = jasonPacket.toString();
+                    String res = post(REQUEST_PPT, json);
+                    JSONTokener jsonParser = new JSONTokener(res);
+                    JSONObject response = (JSONObject) jsonParser.nextValue();
+                    int code = response.getInt("errorCode");
+                    String errorInfo = response.getString("errorInfo");
+
+                    Log.i("wzw", "wzw requestPPTList code:" + code);
+                    if(code == 0){
+                        JSONObject data = response.getJSONObject("data");
+                        JSONArray record = data.getJSONArray("pptlist");
+                        Type listType = new TypeToken<ArrayList<PPTEntity>>() {}.getType();
+                        ArrayList<PPTEntity> result = new Gson().fromJson(record.toString(), listType);
+                        ILiveLog.i(TAG,"size"+result.size());
+                        Log.i("wzw", "wzw showPPTList ");
+                        pptInterface.showPPTList(new RequestBackInfo(code, errorInfo), result);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

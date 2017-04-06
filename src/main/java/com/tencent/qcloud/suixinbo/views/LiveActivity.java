@@ -22,10 +22,13 @@ import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -65,12 +68,14 @@ import com.tencent.qcloud.suixinbo.model.CurLiveInfo;
 import com.tencent.qcloud.suixinbo.model.LiveInfoJson;
 import com.tencent.qcloud.suixinbo.model.MemberID;
 import com.tencent.qcloud.suixinbo.model.MySelfInfo;
+import com.tencent.qcloud.suixinbo.model.PPTEntity;
 import com.tencent.qcloud.suixinbo.model.RoomInfoJson;
 import com.tencent.qcloud.suixinbo.presenters.LiveHelper;
 import com.tencent.qcloud.suixinbo.presenters.LiveListViewHelper;
 import com.tencent.qcloud.suixinbo.presenters.UserServerHelper;
 import com.tencent.qcloud.suixinbo.presenters.viewinface.LiveListView;
 import com.tencent.qcloud.suixinbo.presenters.viewinface.LiveView;
+import com.tencent.qcloud.suixinbo.presenters.viewinface.PPTListView;
 import com.tencent.qcloud.suixinbo.presenters.viewinface.ProfileView;
 import com.tencent.qcloud.suixinbo.utils.Constants;
 import com.tencent.qcloud.suixinbo.utils.GlideCircleTransform;
@@ -81,6 +86,7 @@ import com.tencent.qcloud.suixinbo.views.customviews.BaseActivity;
 import com.tencent.qcloud.suixinbo.views.customviews.HeartLayout;
 import com.tencent.qcloud.suixinbo.views.customviews.InputTextMsgDialog;
 import com.tencent.qcloud.suixinbo.views.customviews.MembersDialog;
+import com.tencent.qcloud.suixinbo.views.customviews.PPTInfoDialog;
 import com.tencent.qcloud.suixinbo.views.customviews.SpeedTestDialog;
 
 import java.util.ArrayList;
@@ -96,7 +102,7 @@ import cn.sharesdk.onekeyshare.OnekeyShare;
 /**
  * Live直播类
  */
-public class LiveActivity extends BaseActivity implements LiveView, View.OnClickListener, ProfileView, LiveListView {
+public class LiveActivity extends BaseActivity implements LiveView, View.OnClickListener, ProfileView, LiveListView , PPTListView {
     private static final String TAG = LiveActivity.class.getSimpleName();
     private static final int GETPROFILE_JOIN = 0x200;
 
@@ -116,6 +122,7 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
     private ArrayList<ChatEntity> mTmpChatList = new ArrayList<ChatEntity>();//缓冲队列
     private TimerTask mTimerTask = null;
     private static final int REFRESH_LISTVIEW = 5;
+    private static final int REFRESH_PPT_LISTVIEW = 11;
     private Dialog mMemberDg, inviteDg;
     private HeartLayout mHeartLayout;
     private TextView mLikeTv;
@@ -173,6 +180,7 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
         backGroundId = CurLiveInfo.getHostID();
 
         requestExpertList();
+        initPPTListView();
         //进入房间流程
         mLiveHelper.startEnterRoom();
         //初始化社会化分享组件
@@ -194,6 +202,9 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
                     break;
                 case REFRESH_LISTVIEW:
                     doRefreshListView();
+                    break;
+                case REFRESH_PPT_LISTVIEW:
+                    mUserAdapter.addAll(mPPTList);
                     break;
                 case TIMEOUT_INVITE:
                     String id = "" + msg.obj;
@@ -248,6 +259,10 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
      * 初始化UI
      */
     private TextView BtnBack, BtnInput, Btnflash, BtnSwitch, BtnBeauty, BtnWhite, BtnMic, BtnScreen, BtnHeart, BtnNormal, mVideoChat, BtnCtrlVideo, BtnCtrlMic, BtnHungup, mBeautyConfirm;
+
+    //wzw add
+    private TextView BtnPPT;
+    private ListView mListViewPPT;
     private TextView inviteView1, inviteView2, inviteView3;
     private ListView mListViewMsgItems;
     private LinearLayout mHostCtrView, mNomalMemberCtrView, mVideoMemberCtrlView, mBeautySettings;
@@ -277,6 +292,8 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
         mVideoMemberCtrlView = (LinearLayout) findViewById(R.id.video_member_bottom_layout);
         mHostLeaveLayout = (LinearLayout) findViewById(R.id.ll_host_leave);
         mVideoChat = (TextView) findViewById(R.id.video_interact);
+        BtnPPT = (TextView) findViewById(R.id.ppt_list);
+        mListViewPPT = (ListView) findViewById(R.id.list_view_ppt);
         mHeartLayout = (HeartLayout) findViewById(R.id.heart_layout);
         mVideoTime = (TextView) findViewById(R.id.broadcasting_time);
         mHeadIcon = (ImageView) findViewById(R.id.head_icon);
@@ -294,6 +311,7 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
         BtnCtrlVideo.setOnClickListener(this);
         BtnCtrlMic.setOnClickListener(this);
         BtnHungup.setOnClickListener(this);
+        BtnPPT.setOnClickListener(this);
         roomId = (TextView) findViewById(R.id.room_id);
 
         //for 测试用
@@ -503,6 +521,7 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
         super.onPause();
         ILiveRoomManager.getInstance().onPause();
     }
+
 
 
     /**
@@ -1086,6 +1105,8 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
             mMemberDg.setCanceledOnTouchOutside(true);
             mMemberDg.show();
 
+        } else if (i == R.id.ppt_list) {
+            switchPPTListView();
         } else if (i == R.id.camera_controll) {
             Toast.makeText(LiveActivity.this, "切换" + backGroundId + "camrea 状态", Toast.LENGTH_SHORT).show();
             Log.i(TAG, "onClick: hostid " + ILiveRoomManager.getInstance().getHostId() + " myself " + MySelfInfo.getInstance().getId());
@@ -1241,6 +1262,85 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
             mNomalMemberCtrView.setVisibility(View.VISIBLE);
             mVideoMemberCtrlView.setVisibility(View.GONE);
         }
+    }
+
+
+    private void switchPPTListView() {
+        Log.i("wzw", "wzw switchPPTListView:" + mListViewPPT.getVisibility());
+        if (mListViewPPT.getVisibility() == View.VISIBLE) {
+            mListViewPPT.setVisibility(View.GONE);
+        } else {
+            mListViewPPT.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void showPPTList(UserServerHelper.RequestBackInfo result, ArrayList<PPTEntity> pptList) {
+        mPPTList = pptList;
+        mHandler.sendEmptyMessage(REFRESH_PPT_LISTVIEW);
+        Log.i("wzw", "wzw pptList:" + pptList);
+    }
+
+    UserAdapter mUserAdapter;
+    ArrayList<PPTEntity> mPPTList;
+    private void initPPTListView() {
+        Log.i("wzw", "wzw initPPTListView");
+        mUserAdapter = new UserAdapter(this, R.layout.text_view);
+        mListViewPPT.setAdapter(mUserAdapter);
+        UserServerHelper.getInstance().requestPPTList(this, MySelfInfo.getInstance().getToken());
+    }
+
+    class UserAdapter extends ArrayAdapter<PPTEntity> {
+        private int mResourceId;
+        private final LayoutInflater mInflater;
+
+        public UserAdapter(Context context, int textViewResourceId) {
+            super(context, textViewResourceId);
+            this.mResourceId = textViewResourceId;
+            mInflater = LayoutInflater.from(context);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            final View view;
+            if (convertView == null) {
+                view = mInflater.inflate(mResourceId, parent, false);
+            } else {
+                view = convertView;
+            }
+            TextView text = (TextView) view;
+            final CharSequence s = (CharSequence) getItem(position).getName();
+            text.setText(s);
+            text.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.i("wzw", "wzw onClick s:" + s);
+                    PPTInfoDialog(s);
+                }
+            });
+
+            return view;
+        }
+    }
+
+    private void PPTInfoDialog(CharSequence s) {
+        //TODO
+        String url = "";
+        for (PPTEntity ppt : mPPTList) {
+            if (ppt.getName().equals(s)) {
+                url = ppt.getCustomer_url();
+                break;
+            }
+        }
+        PPTInfoDialog pptInfoDialog = new PPTInfoDialog(this, R.style.dialog, this, url);
+        WindowManager windowManager = getWindowManager();
+        Display display = windowManager.getDefaultDisplay();
+        WindowManager.LayoutParams lp = pptInfoDialog.getWindow().getAttributes();
+
+        lp.width = (int) (display.getWidth()); //设置宽度
+        pptInfoDialog.getWindow().setAttributes(lp);
+        pptInfoDialog.setCancelable(true);
+        pptInfoDialog.show();
     }
 
 
