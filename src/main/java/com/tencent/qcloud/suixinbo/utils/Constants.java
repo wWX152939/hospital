@@ -13,6 +13,8 @@ public class Constants {
 
     public static final String USER_ID = "user_id";
 
+    public static final String USER_PWD = "user_pwd";
+
     public static final String USER_SIG = "user_sig";
 
     public static final String USER_TOKEN = "user_token";

@@ -12,6 +12,16 @@ import com.tencent.qcloud.suixinbo.utils.SxbLog;
 public class MySelfInfo {
     private static final String TAG = MySelfInfo.class.getSimpleName();
     private String id;
+
+    public String getPwd() {
+        return pwd;
+    }
+
+    public void setPwd(String pwd) {
+        this.pwd = pwd;
+    }
+
+    private String pwd;
     private String userSig;
     private String nickName;    // 呢称
     private String avatar;      // 头像
@@ -131,6 +141,7 @@ public class MySelfInfo {
         SharedPreferences settings = context.getSharedPreferences(Constants.USER_INFO, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(Constants.USER_ID, id);
+        editor.putString(Constants.USER_PWD, pwd);
         editor.putString(Constants.USER_SIG, userSig);
         editor.putString(Constants.USER_TOKEN, token);
         editor.putString(Constants.USER_NICK, nickName);
@@ -152,6 +163,7 @@ public class MySelfInfo {
     public void getCache(Context context) {
         SharedPreferences sharedata = context.getSharedPreferences(Constants.USER_INFO, 0);
         id = sharedata.getString(Constants.USER_ID, null);
+        pwd = sharedata.getString(Constants.USER_PWD, "");
         userSig = sharedata.getString(Constants.USER_SIG, null);
         token = sharedata.getString(Constants.USER_TOKEN,null);
         myRoomNum = sharedata.getInt(Constants.USER_ROOM_NUM, -1);

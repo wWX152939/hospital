@@ -271,6 +271,7 @@ public class UserServerHelper {
                 token = data.getString("token");
                 Integer role = data.getInt("role");
                 MySelfInfo.getInstance().setId(id);
+                MySelfInfo.getInstance().setPwd(password);
                 MySelfInfo.getInstance().setUserSig(Sig);
                 MySelfInfo.getInstance().setToken(token);
                 MySelfInfo.getInstance().setRole(role);
@@ -308,6 +309,7 @@ public class UserServerHelper {
                 token = data.getString("token");
                 Integer role = data.getInt("role");
                 MySelfInfo.getInstance().setId(id);
+                MySelfInfo.getInstance().setPwd(password);
                 MySelfInfo.getInstance().setUserSig(Sig);
                 MySelfInfo.getInstance().setToken(token);
                 MySelfInfo.getInstance().setRole(role);

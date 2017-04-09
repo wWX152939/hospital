@@ -52,7 +52,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
         initView();
         mUserName.setText(MySelfInfo.getInstance().getId());
-        mPassWord.setText("1");
+        mPassWord.setText(MySelfInfo.getInstance().getPwd());
 
         // 初始化直播模块
 /*        ILVLiveConfig liveConfig = new ILVLiveConfig();
