@@ -30,10 +30,15 @@ import com.tencent.ilivesdk.ILiveCallBack;
 import com.tencent.ilivesdk.core.ILiveRoomManager;
 import com.tencent.qcloud.suixinbo.R;
 import com.tencent.qcloud.suixinbo.model.CurLiveInfo;
+import com.tencent.qcloud.suixinbo.model.CustomMsgEntity;
 import com.tencent.qcloud.suixinbo.model.MemberID;
 import com.tencent.qcloud.suixinbo.model.MySelfInfo;
 import com.tencent.qcloud.suixinbo.utils.SxbLog;
 import com.tencent.qcloud.suixinbo.views.LiveActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -266,12 +271,6 @@ public class InputTextMsgDialog extends Dialog {
             e.printStackTrace();
             return;
         }
-        TIMMessage Nmsg = new TIMMessage();
-        TIMTextElem elem = new TIMTextElem();
-        elem.setText(msg);
-        if (Nmsg.addElement(elem) != 0) {
-            return;
-        }
 
         //TODO
         boolean flag = false;
@@ -285,11 +284,25 @@ public class InputTextMsgDialog extends Dialog {
                 Log.i("wzw", "id:" + id + " curList:" + CurLiveInfo.getExpertList());
                 for (int i = 0; i < CurLiveInfo.getExpertList().size(); i ++) {
                     if (CurLiveInfo.getExpertList().get(i).getId().contains(id)) {
+                        // 符合@id:msg格式，去除@id:，保留msg
+                        msg = msgs[1];
                         flag = true;
                         break;
                     }
                 }
             }
+        }
+
+        TIMMessage Nmsg = new TIMMessage();
+        TIMTextElem elem = new TIMTextElem();
+        if (flag) {
+            msg = getMsgObject(CustomMsgEntity.Guest2LiveGuest, msg);
+        } else {
+            msg = getMsgObject(CustomMsgEntity.GuestGroupChat, msg);
+        }
+        elem.setText(msg);
+        if (Nmsg.addElement(elem) != 0) {
+            return;
         }
 
         if (flag) {
@@ -309,6 +322,8 @@ public class InputTextMsgDialog extends Dialog {
                 for (int j = 0; j < data.getElementCount(); j++) {
                     TIMElem elem = (TIMElem) data.getElement(0);
                     TIMTextElem textElem = (TIMTextElem) elem;
+                    String s = getMsgContent(CustomMsgEntity.Guest2LiveGuest, textElem.getText());
+                    textElem.setText(s);
                     if (data.isSelf()) {
                         if (mVideoPlayActivity != null)
                             mVideoPlayActivity.refreshText(textElem.getText(), MySelfInfo.getInstance().getNickName());
@@ -335,6 +350,46 @@ public class InputTextMsgDialog extends Dialog {
         });
     }
 
+    private String getMsgObject(String msgCmd, String msgContent) {
+        JSONObject msg = new JSONObject();
+        String msgObject = "";
+        try {
+            msg.put("cmd", msgCmd);
+            JSONObject request = new JSONObject();
+            request.put("msgtype", "");
+            request.put("sequence", "");
+            request.put("version", "");
+            msg.put("request", request);
+            JSONObject body = new JSONObject();
+            body.put("msgContent", msgContent);
+            body.put("sender", MySelfInfo.getInstance().getId());
+            msg.put("msgbody", body);
+            msgObject = msg.toString();
+            Log.i("wzw", "wzw cmd:" + msgCmd + " content:" + " msg:" + msgObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return msgObject;
+    }
+
+    public static String getMsgContent(String type, String msgObject) {
+        JSONTokener jsonParser = new JSONTokener(msgObject);
+        Log.i("wzw", "wzw type:" + type + " msgObject:" + msgObject);
+        JSONObject response = null;
+        try {
+            response = (JSONObject) jsonParser.nextValue();
+            String cmd = response.getString("cmd");
+            if (cmd.equals(type)) {
+                JSONObject data = response.getJSONObject("msgbody");
+                String msgContent = data.getString("msgContent");
+                return msgContent;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     private void setGroupMsg(TIMMessage Nmsg) {
         ILiveRoomManager.getInstance().sendGroupMessage(Nmsg, new ILiveCallBack<TIMMessage>() {
             @Override
@@ -343,6 +398,8 @@ public class InputTextMsgDialog extends Dialog {
                 for (int j = 0; j < data.getElementCount(); j++) {
                     TIMElem elem = (TIMElem) data.getElement(0);
                     TIMTextElem textElem = (TIMTextElem) elem;
+                    String s = getMsgContent(CustomMsgEntity.GuestGroupChat, textElem.getText());
+                    textElem.setText(s);
                     if (data.isSelf()) {
                         if (mVideoPlayActivity != null)
                             mVideoPlayActivity.refreshText(textElem.getText(), MySelfInfo.getInstance().getNickName());

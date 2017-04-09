@@ -34,12 +34,14 @@ import com.tencent.livesdk.ILVLiveRoomOption;
 import com.tencent.livesdk.ILVText;
 import com.tencent.qcloud.suixinbo.R;
 import com.tencent.qcloud.suixinbo.model.CurLiveInfo;
+import com.tencent.qcloud.suixinbo.model.CustomMsgEntity;
 import com.tencent.qcloud.suixinbo.model.MemberID;
 import com.tencent.qcloud.suixinbo.model.MySelfInfo;
 import com.tencent.qcloud.suixinbo.presenters.viewinface.LiveView;
 import com.tencent.qcloud.suixinbo.utils.Constants;
 import com.tencent.qcloud.suixinbo.utils.LogConstants;
 import com.tencent.qcloud.suixinbo.utils.SxbLog;
+import com.tencent.qcloud.suixinbo.views.customviews.InputTextMsgDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -678,8 +680,8 @@ public class LiveHelper extends Presenter implements ILiveRoomOption.onRoomDisco
      */
     private void handleTextMessage(TIMElem elem, String name) {
         TIMTextElem textElem = (TIMTextElem) elem;
-
-        mLiveView.refreshText(textElem.getText(), name);
+        String s = InputTextMsgDialog.getMsgContent(CustomMsgEntity.GuestGroupChat, textElem.getText());
+        mLiveView.refreshText(s, name);
     }
 
 
