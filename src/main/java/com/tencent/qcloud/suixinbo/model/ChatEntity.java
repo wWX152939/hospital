@@ -9,7 +9,16 @@ public class ChatEntity {
 	private String context;
 	private int  type;
 
+	public String getSequence() {
+		return sequence;
+	}
 
+	public void setSequence(String sequence) {
+		this.sequence = sequence;
+	}
+
+	//wzw add 置顶消息才有，取消置顶根据该属性判断
+	private String sequence;
 
 
 	public ChatEntity() {

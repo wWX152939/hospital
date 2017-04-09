@@ -140,6 +140,7 @@
             android:visibility="gone"
             android:scrollbars="none"
             android:divider="#F1F1F1"
+            android:background="@color/white"
             android:dividerHeight="1px" />
 
         <TextView
@@ -151,6 +152,19 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/cross_icon"
             android:onClick="onClick" />
+
+        <ListView
+            android:id="@+id/im_msg_top_listview"
+            android:layout_width="250dp"
+            android:layout_height="0dp"
+            android:layout_gravity="left|bottom"
+            android:layout_marginBottom="200dp"
+            android:layout_marginTop="50dp"
+            android:cacheColorHint="#00000000"
+            android:divider="#3c421b1b"
+            android:scrollbarStyle="outsideOverlay"
+            android:stackFromBottom="true"
+            android:transcriptMode="normal" />
 
         <ListView
             android:id="@+id/im_msg_listview"

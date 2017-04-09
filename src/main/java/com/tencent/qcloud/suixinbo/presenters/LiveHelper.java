@@ -176,6 +176,7 @@ public class LiveHelper extends Presenter implements ILiveRoomOption.onRoomDisco
                 .authBits(AVRoomMulti.AUTH_BITS_JOIN_ROOM | AVRoomMulti.AUTH_BITS_RECV_AUDIO | AVRoomMulti.AUTH_BITS_RECV_CAMERA_VIDEO | AVRoomMulti.AUTH_BITS_RECV_SCREEN_VIDEO)
                 .videoRecvMode(AVRoomMulti.VIDEO_RECV_MODE_SEMI_AUTO_RECV_CAMERA_VIDEO)
                 .autoMic(false);
+        Log.i("wzw", "wzw join room:" + CurLiveInfo.getRoomNum());
         ILVLiveManager.getInstance().switchRoom(CurLiveInfo.getRoomNum(), memberOption, new ILiveCallBack() {
             @Override
             public void onSuccess(Object data) {
@@ -675,13 +676,53 @@ public class LiveHelper extends Presenter implements ILiveRoomOption.onRoomDisco
         }
     }
 
+
     /**
      * 处理文本消息解析
      */
     private void handleTextMessage(TIMElem elem, String name) {
         TIMTextElem textElem = (TIMTextElem) elem;
-        String s = InputTextMsgDialog.getMsgContent(CustomMsgEntity.GuestGroupChat, textElem.getText());
-        mLiveView.refreshText(s, name);
+
+        //wzw add handle shin json
+        String msgObject = textElem.getText();
+        JSONTokener jsonParser = new JSONTokener(msgObject);
+        Log.i("wzw", "wzw msgObject:" + msgObject);
+        JSONObject response = null;
+        try {
+            response = (JSONObject) jsonParser.nextValue();
+            String cmd = response.getString("cmd");
+            if (cmd.equals(CustomMsgEntity.GuestGroupChat)) {
+                JSONObject data = response.getJSONObject("msgbody");
+                String msgContent = data.getString("msgContent");
+                mLiveView.refreshText(msgContent, name);
+            } else if (cmd.equals(CustomMsgEntity.TopMessage)) {
+                JSONObject data = response.getJSONObject("msgbody");
+                String msgContent = data.getString("msgContent");
+                JSONTokener jsonParser2 = new JSONTokener(msgContent);
+                response = (JSONObject) jsonParser2.nextValue();
+                cmd = response.getString("cmd");
+                if (cmd.equals(CustomMsgEntity.GuestGroupChat)) {
+                    data = response.getJSONObject("request");
+                    String seq = data.getString("sequence");
+                    data = response.getJSONObject("msgbody");
+                    msgContent = data.getString("msgContent");
+                    mLiveView.refreshTopText(seq, msgContent, name);
+                }
+            } else if (cmd.equals(CustomMsgEntity.CancelTopMessage)) {
+                JSONObject data = response.getJSONObject("msgbody");
+                String msgContent = data.getString("msgContent");
+                JSONTokener jsonParser2 = new JSONTokener(msgContent);
+                response = (JSONObject) jsonParser2.nextValue();
+                cmd = response.getString("cmd");
+                if (cmd.equals(CustomMsgEntity.GuestGroupChat)) {
+                    data = response.getJSONObject("request");
+                    String seq = data.getString("sequence");
+                    mLiveView.cancelTopText(seq);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
 

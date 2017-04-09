@@ -35,7 +35,7 @@ import java.util.List;
 public class ChatMsgListAdapter extends BaseAdapter implements AbsListView.OnScrollListener {
 
     private static String TAG = ChatMsgListAdapter.class.getSimpleName();
-    private static final int ITEMCOUNT = 7;
+    private static final int ITEMCOUNT = 5;
     private List<ChatEntity> listMessage = null;
     private LayoutInflater inflater;
     private LinearLayout layout;

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,6 +80,7 @@ public class FragmentLiveList extends Fragment implements View.OnClickListener, 
                     CurLiveInfo.setHostID(item.getHostId());
                     CurLiveInfo.setHostName("");
                     CurLiveInfo.setHostAvator("");
+                    Log.i("wzw", "wzw click room_id:" + item.getInfo().getRoomnum());
                     CurLiveInfo.setRoomNum(item.getInfo().getRoomnum());
                     CurLiveInfo.setMembers(item.getInfo().getMemsize()); // 添加自己
                     CurLiveInfo.setAdmires(item.getInfo().getThumbup());
@@ -117,7 +119,7 @@ public class FragmentLiveList extends Fragment implements View.OnClickListener, 
             Toast.makeText(getContext(), "error "+info.getErrorCode()+" info " +info.getErrorInfo(), Toast.LENGTH_SHORT).show();
             return ;
         }
-
+        Log.i("wzw", "wzw showRoomList roomlist：" + roomlist);
         mSwipeRefreshLayout.setRefreshing(false);
         roomList.clear();
         if (null != roomlist) {

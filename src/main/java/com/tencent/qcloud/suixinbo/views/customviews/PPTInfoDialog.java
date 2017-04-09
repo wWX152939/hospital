@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.util.Log;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.tencent.qcloud.suixinbo.R;
 import com.tencent.qcloud.suixinbo.views.LiveActivity;
@@ -34,6 +35,13 @@ public class PPTInfoDialog extends Dialog {
         mWebView.getSettings().setLoadWithOverviewMode(true);//和setUseWideViewPort(true)一起解决网页自适应问题
         mWebView.getSettings().setAppCacheEnabled(true);//是否使用缓存
         mWebView.getSettings().setDomStorageEnabled(true);//DOM Storage important
+        mWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return true;
+            }
+    });
         // displayWebview.getSettings().setUserAgentString("User-Agent:Android");//设置用户代理，一般不用
     }
 

@@ -357,7 +357,9 @@ public class InputTextMsgDialog extends Dialog {
             msg.put("cmd", msgCmd);
             JSONObject request = new JSONObject();
             request.put("msgtype", "");
-            request.put("sequence", "");
+
+            java.util.UUID uuid = java.util.UUID.randomUUID();
+            request.put("sequence", uuid.toString());
             request.put("version", "");
             msg.put("request", request);
             JSONObject body = new JSONObject();
@@ -372,7 +374,7 @@ public class InputTextMsgDialog extends Dialog {
         return msgObject;
     }
 
-    public static String getMsgContent(String type, String msgObject) {
+    private String getMsgContent(String type, String msgObject) {
         JSONTokener jsonParser = new JSONTokener(msgObject);
         Log.i("wzw", "wzw type:" + type + " msgObject:" + msgObject);
         JSONObject response = null;

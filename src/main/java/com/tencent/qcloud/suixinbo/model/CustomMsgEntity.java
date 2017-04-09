@@ -6,8 +6,13 @@ package com.tencent.qcloud.suixinbo.model;
 
 public class CustomMsgEntity {
 
-    public static String GuestGroupChat = "message/text/guestGroupChat";
-    public static String Guest2LiveGuest = "message/text/liveGuestGroupChat";
+    public static final String GuestGroupChat = "message/text/guestGroupChat";
+    public static final String Guest2LiveGuest = "message/text/guest2LiveGuest";
+
+    public static final String TopMessage = "message/control/topMessage";
+    public static final String CancelTopMessage = "message/control/cancelTopMessage";
+
+
     public String getCmd() {
         return cmd;
     }

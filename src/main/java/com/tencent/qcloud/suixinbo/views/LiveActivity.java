@@ -113,6 +113,16 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
 
     private ArrayList<ChatEntity> mArrayListChatEntity;
     private ChatMsgListAdapter mChatMsgListAdapter;
+
+    //wzw add for top msg
+
+    private ArrayList<ChatEntity> mTopArrayListChatEntity;
+    private ChatMsgListAdapter mTopChatMsgListAdapter;
+    private ArrayList<ChatEntity> mTopTmpChatList = new ArrayList<ChatEntity>();//缓冲队列
+    private boolean mTopBoolNeedRefresh = false;
+    private boolean mTopBoolRefreshLock = false;
+    private TimerTask mTopTimerTask = null;
+
     private static final int MINFRESHINTERVAL = 500;
     private static final int UPDAT_WALL_TIME_TIMER_TASK = 1;
     private static final int TIMEOUT_INVITE = 2;
@@ -123,6 +133,7 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
     private TimerTask mTimerTask = null;
     private static final int REFRESH_LISTVIEW = 5;
     private static final int REFRESH_PPT_LISTVIEW = 11;
+    private static final int REFRESH_TOP_LISTVIEW = 13;
     private Dialog mMemberDg, inviteDg;
     private HeartLayout mHeartLayout;
     private TextView mLikeTv;
@@ -206,6 +217,9 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
                 case REFRESH_PPT_LISTVIEW:
                     mUserAdapter.addAll(mPPTList);
                     break;
+                case REFRESH_TOP_LISTVIEW:
+                    doTopRefreshListView();
+                    break;
                 case TIMEOUT_INVITE:
                     String id = "" + msg.obj;
                     cancelInviteView(id);
@@ -265,6 +279,7 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
     private ListView mListViewPPT;
     private TextView inviteView1, inviteView2, inviteView3;
     private ListView mListViewMsgItems;
+    private ListView mTopListViewMsgItems;
     private LinearLayout mHostCtrView, mNomalMemberCtrView, mVideoMemberCtrlView, mBeautySettings;
     private FrameLayout mFullControllerUi, mBackgound;
     private SeekBar mBeautyBar;
@@ -436,6 +451,13 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
         mArrayListChatEntity = new ArrayList<ChatEntity>();
         mChatMsgListAdapter = new ChatMsgListAdapter(this, mListViewMsgItems, mArrayListChatEntity);
         mListViewMsgItems.setAdapter(mChatMsgListAdapter);
+
+        //wzw add for top
+        mTopListViewMsgItems = (ListView) findViewById(R.id.im_msg_top_listview);
+        mTopArrayListChatEntity = new ArrayList<ChatEntity>();
+        mTopChatMsgListAdapter = new ChatMsgListAdapter(this, mTopListViewMsgItems, mTopArrayListChatEntity);
+        mTopListViewMsgItems.setAdapter(mTopChatMsgListAdapter);
+
 
         tvMembers.setText("" + CurLiveInfo.getMembers());
         tvAdmires.setText("" + CurLiveInfo.getAdmires());
@@ -818,6 +840,62 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
     public void refreshText(String text, String name) {
         if (text != null) {
             refreshTextListView(name, text, Constants.TEXT_TYPE);
+        }
+    }
+
+    @Override
+    public void refreshTopText(String sequence, String text, String name) {
+        if (text != null) {
+            ChatEntity entity = new ChatEntity();
+            entity.setSenderName(name);
+            entity.setContext(text);
+            entity.setSequence(sequence);
+            entity.setType(Constants.TEXT_TYPE);
+            mTopBoolNeedRefresh = true;
+            mTopTmpChatList.add(entity);
+            if (mTopBoolRefreshLock) {
+                return;
+            } else {
+                doTopRefreshListView();
+            };
+            //mChatMsgListAdapter.notifyDataSetChanged();
+
+            mTopListViewMsgItems.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void doTopRefreshListView() {
+        if (mTopBoolNeedRefresh) {
+            mTopBoolRefreshLock = true;
+            mTopBoolNeedRefresh = false;
+            mTopArrayListChatEntity.addAll(mTopTmpChatList);
+            mTopTmpChatList.clear();
+            mTopChatMsgListAdapter.notifyDataSetChanged();
+
+            if (null != mTimerTask) {
+                mTimerTask.cancel();
+            }
+            mTopTimerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    mHandler.sendEmptyMessage(REFRESH_TOP_LISTVIEW);
+                }
+            };
+            //mTimer.cancel();
+            mTimer.schedule(mTopTimerTask, MINFRESHINTERVAL);
+        } else {
+            mTopBoolRefreshLock = false;
+        }
+    }
+
+    @Override
+    public void cancelTopText(String sequence) {
+        for (ChatEntity entity : mTopArrayListChatEntity) {
+            if (entity.getSequence().equals(sequence)) {
+                mTopArrayListChatEntity.remove(entity);
+                mTopChatMsgListAdapter.notifyDataSetChanged();
+                break;
+            }
         }
     }
 
@@ -1732,6 +1810,16 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
         } else {
             doRefreshListView();
         }
+
+        // Top
+        mTopArrayListChatEntity.clear();
+        mTopBoolNeedRefresh = true;
+        if (mTopBoolRefreshLock) {
+            return;
+        } else {
+            doTopRefreshListView();
+        }
+
         mRootView.clearUserView();
     }
 
