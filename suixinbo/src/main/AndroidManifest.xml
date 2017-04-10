@@ -42,10 +42,10 @@
         android:supportsRtl="true">
         <activity android:name=".views.LoginActivity"
             android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
         </activity>
 
         <activity android:name=".views.RegisterActivity"
@@ -109,7 +109,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.tencent.qcloud.suixinbo.fileProvider1"
+            android:authorities="com.tencent.qcloud.suixinbo.fileProvider2"
             android:grantUriPermissions="true"
             android:exported="false">
             <meta-data
