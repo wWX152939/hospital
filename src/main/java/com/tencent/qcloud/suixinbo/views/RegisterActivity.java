@@ -16,13 +16,14 @@ import com.tencent.qcloud.suixinbo.R;
 import com.tencent.qcloud.suixinbo.model.MySelfInfo;
 import com.tencent.qcloud.suixinbo.presenters.LoginHelper;
 import com.tencent.qcloud.suixinbo.presenters.viewinface.LoginView;
+import com.tencent.qcloud.suixinbo.utils.Validator;
 import com.tencent.qcloud.suixinbo.views.customviews.BaseActivity;
 
 /**
  * 注册账号类
  */
 public class RegisterActivity extends BaseActivity implements View.OnClickListener, LoginView {
-    private EditText mUserName, mPassword, mRepassword;
+    private EditText mUserName, mPassword, mRepassword, mEmail;
     private TextView mBtnRegister;
     private ImageButton mBtnBack;
     QavsdkApplication mMyApplication;
@@ -34,6 +35,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_independent_register);
         mUserName = (EditText) findViewById(R.id.username);
+        mEmail = (EditText) findViewById(R.id.email);
         mPassword = (EditText) findViewById(R.id.password);
         mRepassword = (EditText) findViewById(R.id.repassword);
         mBtnRegister = (TextView) findViewById(R.id.btn_register);
@@ -55,6 +57,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         if (view.getId() == R.id.btn_register) {
             String userId = mUserName.getText().toString();
             String userPW = mPassword.getText().toString();
+            String userEmail = mEmail.getText().toString();
             String userPW2 = mRepassword.getText().toString();
 
 
@@ -80,8 +83,13 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                 return;
             }
 
+            if (!Validator.isEmail(userEmail)) {
+                Toast.makeText(RegisterActivity.this, "邮箱格式不合法", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             //注册一个账号
-            mLoginHeloper.standardRegister(userId, mPassword.getText().toString());
+            mLoginHeloper.standardRegister(userId, mPassword.getText().toString(), userEmail);
         }
         if (view.getId() == R.id.back) {
             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
