@@ -9,6 +9,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +36,7 @@ import java.util.List;
 public class ChatMsgListAdapter extends BaseAdapter implements AbsListView.OnScrollListener {
 
     private static String TAG = ChatMsgListAdapter.class.getSimpleName();
-    private static final int ITEMCOUNT = 5;
+    private static final int ITEMCOUNT = 7;
     private List<ChatEntity> listMessage = null;
     private LayoutInflater inflater;
     private LinearLayout layout;
@@ -164,12 +165,20 @@ public class ChatMsgListAdapter extends BaseAdapter implements AbsListView.OnScr
             if (!item.getSenderName().isEmpty())
                 spanString.setSpan(new ForegroundColorSpan(calcNameColor(item.getSenderName())),
                         0, item.getSenderName().length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-            holder.sendContext.setTextColor(context.getResources().getColor(R.color.colorTextBlack));
+            setTextColor(holder.sendContext);
         }
-        holder.sendContext.setText(spanString);
+        setText(holder.sendContext, item, spanString);
         // 设置控件实际宽度以便计算列表项实际高度
         holder.sendContext.fixViewWidth(mListView.getWidth());
         return convertView;
+    }
+
+    protected void setTextColor(CustomTextView sendContext) {
+        sendContext.setTextColor(context.getResources().getColor(R.color.colorTextBlack));
+    }
+
+    protected void setText(CustomTextView sendContext, ChatEntity item, SpannableString spanString) {
+        sendContext.setText(spanString);
     }
 
 
@@ -340,6 +349,11 @@ public class ChatMsgListAdapter extends BaseAdapter implements AbsListView.OnScr
             listItem.measure(0, 0);
             // add item height
             totalHeight = totalHeight + listItem.getMeasuredHeight();
+        }
+        int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 240, context.getResources()
+                .getDisplayMetrics());
+        if (totalHeight > height) {
+            totalHeight = height;
         }
         mCreateAnimator = true;
 

@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
@@ -83,6 +84,7 @@ import com.tencent.qcloud.suixinbo.utils.LogConstants;
 import com.tencent.qcloud.suixinbo.utils.SxbLog;
 import com.tencent.qcloud.suixinbo.utils.UIUtils;
 import com.tencent.qcloud.suixinbo.views.customviews.BaseActivity;
+import com.tencent.qcloud.suixinbo.views.customviews.CustomTextView;
 import com.tencent.qcloud.suixinbo.views.customviews.HeartLayout;
 import com.tencent.qcloud.suixinbo.views.customviews.InputTextMsgDialog;
 import com.tencent.qcloud.suixinbo.views.customviews.MembersDialog;
@@ -455,7 +457,17 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
         //wzw add for top
         mTopListViewMsgItems = (ListView) findViewById(R.id.im_msg_top_listview);
         mTopArrayListChatEntity = new ArrayList<ChatEntity>();
-        mTopChatMsgListAdapter = new ChatMsgListAdapter(this, mTopListViewMsgItems, mTopArrayListChatEntity);
+        mTopChatMsgListAdapter = new ChatMsgListAdapter(this, mTopListViewMsgItems, mTopArrayListChatEntity) {
+            @Override
+            protected void setTextColor(CustomTextView sendContext) {
+                sendContext.setTextColor(getResources().getColor(R.color.colorRed));
+            }
+
+            @Override
+            protected void setText(CustomTextView sendContext, ChatEntity item, SpannableString spanString) {
+                sendContext.setText(item.getContext());
+            }
+        };
         mTopListViewMsgItems.setAdapter(mTopChatMsgListAdapter);
 
 
@@ -847,7 +859,7 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
     public void refreshTopText(String sequence, String text, String name) {
         if (text != null) {
             ChatEntity entity = new ChatEntity();
-            entity.setSenderName(name);
+            entity.setSenderName("置顶");
             entity.setContext(text);
             entity.setSequence(sequence);
             entity.setType(Constants.TEXT_TYPE);

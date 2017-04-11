@@ -131,18 +131,6 @@
             android:layout_marginTop="90dp"
             android:background="@drawable/ppt_bg" />
 
-        <ListView
-            android:id="@+id/list_view_ppt"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="120dp"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:scrollbars="none"
-            android:divider="#F1F1F1"
-            android:background="@color/white"
-            android:dividerHeight="1px" />
-
         <TextView
             android:id="@+id/btn_back"
             android:layout_width="30dp"
@@ -152,19 +140,6 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/cross_icon"
             android:onClick="onClick" />
-
-        <ListView
-            android:id="@+id/im_msg_top_listview"
-            android:layout_width="250dp"
-            android:layout_height="0dp"
-            android:layout_gravity="left|bottom"
-            android:layout_marginBottom="200dp"
-            android:layout_marginTop="50dp"
-            android:cacheColorHint="#00000000"
-            android:divider="#3c421b1b"
-            android:scrollbarStyle="outsideOverlay"
-            android:stackFromBottom="true"
-            android:transcriptMode="normal" />
 
         <ListView
             android:id="@+id/im_msg_listview"
@@ -179,6 +154,29 @@
             android:stackFromBottom="true"
             android:transcriptMode="normal" />
 
+        <ListView
+            android:id="@+id/im_msg_top_listview"
+            android:layout_width="250dp"
+            android:layout_height="0dp"
+            android:layout_gravity="left|bottom"
+            android:layout_marginBottom="300dp"
+            android:layout_marginTop="50dp"
+            android:cacheColorHint="#00000000"
+            android:divider="#3c421b1b"
+            android:scrollbarStyle="outsideOverlay"
+            android:transcriptMode="normal" />
+
+        <ListView
+            android:id="@+id/list_view_ppt"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="120dp"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:scrollbars="none"
+            android:divider="#F1F1F1"
+            android:background="@color/white"
+            android:dividerHeight="1px" />
 
         <include
             layout="@layout/member_bottom_layout"
