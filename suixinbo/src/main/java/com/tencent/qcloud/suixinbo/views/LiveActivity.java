@@ -516,7 +516,9 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
                                     mNomalMemberCtrView.setVisibility(View.VISIBLE);
                                 } else {
                                     mVideoMemberCtrlView.setVisibility(View.INVISIBLE);
-                                    mNomalMemberCtrView.setVisibility(View.INVISIBLE);
+
+                                    //wzw 底部按钮一直显示
+                                    mNomalMemberCtrView.setVisibility(View.VISIBLE);
                                 }
 
                             }
@@ -534,7 +536,8 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
                         }else if(e2.getY()-e1.getY() > 20 && Math.abs(velocityY) > 10){
                             bSlideUp = false;
                         }
-                        switchRoom();
+                        // wzw don't switch
+//                        switchRoom();
 
                         return false;
                     }
@@ -1179,7 +1182,8 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
             }
             mLiveHelper.toggleMic();
         } else if (i == R.id.head_up_layout) {
-            showHostDetail();
+            // wzw dont show
+//            showHostDetail();
 
         } else if (i == R.id.clean_screen || i == R.id.fullscreen_btn) {
             bCleanMode = true;
