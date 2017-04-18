@@ -815,6 +815,7 @@ public class LiveActivity extends BaseActivity implements LiveView, View.OnClick
 
     @Override
     public void refreshMember(ArrayList<MemberID> memlist) {
+        // 定时器，五秒一次
         if (memlist != null && tvMembers != null) {
             tvMembers.setText("" + memlist.size());
             UserServerHelper.getInstance().requestExpertList(MySelfInfo.getInstance().getToken(), CurLiveInfo.getRoomNum());

@@ -1,6 +1,7 @@
 package com.tencent.qcloud.suixinbo.model;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,7 +14,7 @@ public class CurLiveInfo {
     private static double lat1;
     private static double long1;
 
-    private static List<MemberID> expertList;
+    private static List<MemberID> expertList = new ArrayList<>();
     private static String address = "";
     private static String coverurl = "";
 
@@ -32,7 +33,8 @@ public class CurLiveInfo {
     }
 
     public static void setExpertList(List<MemberID> expertList) {
-        CurLiveInfo.expertList = expertList;
+        CurLiveInfo.expertList.clear();
+        CurLiveInfo.expertList.addAll(expertList);
     }
     public static int getCurrentRequestCount() {
         return currentRequestCount;
