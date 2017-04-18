@@ -20,6 +20,7 @@ import com.tencent.qcloud.suixinbo.model.MySelfInfo;
 import com.tencent.qcloud.suixinbo.presenters.InitBusinessHelper;
 import com.tencent.qcloud.suixinbo.presenters.LoginHelper;
 import com.tencent.qcloud.suixinbo.presenters.ProfileInfoHelper;
+import com.tencent.qcloud.suixinbo.presenters.viewinface.LogoutView;
 import com.tencent.qcloud.suixinbo.presenters.viewinface.ProfileView;
 import com.tencent.qcloud.suixinbo.utils.Constants;
 import com.tencent.qcloud.suixinbo.utils.SxbLog;
@@ -31,7 +32,7 @@ import java.util.List;
 /**
  * 主界面
  */
-public class HomeActivity extends BaseFragmentActivity implements ProfileView {
+public class HomeActivity extends BaseFragmentActivity implements ProfileView, LogoutView {
     private FragmentTabHost mTabHost;
     private LayoutInflater layoutInflater;
     private ProfileInfoHelper infoHelper;
@@ -46,7 +47,7 @@ public class HomeActivity extends BaseFragmentActivity implements ProfileView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_layout);
-        SxbLog.i(TAG, "HomeActivity onStart");
+        SxbLog.i(TAG, "HomeActivity onCreate");
         SharedPreferences pref = getSharedPreferences("data", MODE_PRIVATE);
         boolean living = pref.getBoolean("living", false);
         mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
@@ -131,7 +132,7 @@ public class HomeActivity extends BaseFragmentActivity implements ProfileView {
         if (ILiveSDK.getInstance().getAVContext() == null) {//retry
             InitBusinessHelper.initApp(getApplicationContext());
             SxbLog.i(TAG, "HomeActivity retry login");
-            mLoginHelper = new LoginHelper(this);
+            mLoginHelper = new LoginHelper(this, this);
             mLoginHelper.iLiveLogin(MySelfInfo.getInstance().getId(), MySelfInfo.getInstance().getUserSig());
         }
     }
@@ -143,10 +144,17 @@ public class HomeActivity extends BaseFragmentActivity implements ProfileView {
         return view;
     }
 
+    public void onBackPressed() {
+        SxbLog.i(TAG, "onBackPressed");
+        if (mLoginHelper == null) {
+            mLoginHelper = new LoginHelper(this, this);
+        }
+
+        mLoginHelper.standardLogout(MySelfInfo.getInstance().getId());
+    }
+
     @Override
     protected void onDestroy() {
-        if (mLoginHelper != null)
-            mLoginHelper.onDestory();
         SxbLog.i(TAG, "HomeActivity onDestroy");
         super.onDestroy();
     }
@@ -166,5 +174,24 @@ public class HomeActivity extends BaseFragmentActivity implements ProfileView {
 
     @Override
     public void updateUserInfo(int reqid, List<TIMUserProfile> profiles) {
+    }
+
+    @Override
+    public void logoutSucc() {
+//        if (mLoginHelper != null) {
+//            mLoginHelper.onDestory();
+//        }
+        SxbLog.i(TAG, "HomeActivity logoutSucc");
+
+        finish();
+//        super.onBackPressed();
+//        Intent intent = new Intent();
+//        intent.setClass(this, LoginActivity.class);
+//        startActivity(intent);
+    }
+
+    @Override
+    public void logoutFail() {
+
     }
 }

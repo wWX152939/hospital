@@ -2,6 +2,7 @@ package com.tencent.qcloud.suixinbo.presenters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
@@ -35,6 +36,12 @@ public class LoginHelper extends Presenter {
         mLogoutView = logoutView;
     }
 
+    public LoginHelper(Context context, LoginView loginView, LogoutView logoutView) {
+        mContext = context;
+        mLoginView = loginView;
+        mLogoutView = logoutView;
+    }
+
 
     //登录模式登录
     private StandardLoginTask loginTask;
@@ -62,6 +69,8 @@ public class LoginHelper extends Presenter {
                 } else {
                     mLoginView.loginFail("Module_TLSSDK", result.getErrorCode(), result.getErrorInfo());
                 }
+            } else {
+                Toast.makeText(mContext, "服务器异常", Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -96,8 +105,11 @@ public class LoginHelper extends Presenter {
             public void onSuccess(Object data) {
                 SxbLog.i(TAG, "IMLogout succ !");
                 //清除本地缓存
-                MySelfInfo.getInstance().clearCache(mContext);
+//                MySelfInfo.getInstance().clearCache(mContext);
                 mLogoutView.logoutSucc();
+                SharedPreferences.Editor editor = mContext.getSharedPreferences("data", Context.MODE_PRIVATE).edit();
+                editor.putBoolean("living", false);
+                editor.apply();
             }
 
             @Override

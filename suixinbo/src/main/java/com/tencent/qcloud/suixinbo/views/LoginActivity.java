@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import com.tencent.qcloud.suixinbo.model.MySelfInfo;
 import com.tencent.qcloud.suixinbo.presenters.InitBusinessHelper;
 import com.tencent.qcloud.suixinbo.presenters.LoginHelper;
 import com.tencent.qcloud.suixinbo.presenters.viewinface.LoginView;
+import com.tencent.qcloud.suixinbo.presenters.viewinface.LogoutView;
 import com.tencent.qcloud.suixinbo.utils.SxbLog;
 import com.tencent.qcloud.suixinbo.views.customviews.BaseActivity;
 
@@ -38,7 +40,17 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         super.onCreate(savedInstanceState);
         InitBusinessHelper.initApp(getApplicationContext());
         SxbLog.i(TAG, "LoginActivity onCreate");
-        mLoginHeloper = new LoginHelper(this, this);
+        mLoginHeloper = new LoginHelper(this, this, new LogoutView() {
+            @Override
+            public void logoutSucc() {
+
+            }
+
+            @Override
+            public void logoutFail() {
+
+            }
+        });
         checkPermission();
         //获取个人数据本地缓存
         MySelfInfo.getInstance().getCache(getApplicationContext());
@@ -51,8 +63,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 //        }
 
         initView();
-        mUserName.setText(MySelfInfo.getInstance().getId());
-        mPassWord.setText(MySelfInfo.getInstance().getPwd());
+
+        Intent intent = getIntent();
+        String id = intent.getStringExtra(RegisterActivity.ID);
+        String name = intent.getStringExtra(RegisterActivity.NAME);
+
+        mUserName.setText(id == null ? MySelfInfo.getInstance().getId() : id);
+        mPassWord.setText(name == null ? MySelfInfo.getInstance().getPwd() : name);
 
         // 初始化直播模块
 /*        ILVLiveConfig liveConfig = new ILVLiveConfig();
@@ -62,6 +79,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     protected void onDestroy() {
+        Log.i(TAG, "wzw onDestroy");
         mLoginHeloper.onDestory();
         super.onDestroy();
     }
@@ -135,7 +153,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void loginFail(String mode,int code ,String errorinfo) {
+    public void loginFail(String mode, int code ,String errorinfo) {
         if (code == 30003) {
             // wzw 登录成功判断邀请码
             final EditText et = new EditText(this);
@@ -163,7 +181,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     })
                     .show();
         } else {
-            Toast.makeText(LoginActivity.this, "login fail" + " code:" + code + " user:" + MySelfInfo.getInstance().getId() + " : "+errorinfo, Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, errorinfo, Toast.LENGTH_SHORT).show();
         }
 
     }

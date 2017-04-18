@@ -67,6 +67,10 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                 return;
             }
 
+            if (!Validator.isEmail(userEmail)) {
+                Toast.makeText(RegisterActivity.this, "邮箱格式不合法", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             if (userId.length() == 0 || userPW.length() == 0 || userPW2.length() == 0) {
                 Toast.makeText(RegisterActivity.this, "用户名和密码不能为空", Toast.LENGTH_SHORT).show();
@@ -80,11 +84,6 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
 
             if (userPW.length() < 8) {
                 Toast.makeText(RegisterActivity.this, "密码的长度不能小于8个字符", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (!Validator.isEmail(userEmail)) {
-                Toast.makeText(RegisterActivity.this, "邮箱格式不合法", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -106,7 +105,6 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void loginFail(String module, int errCode, String errMsg) {
-        Toast.makeText(this, "code "+errCode+"     "+errMsg , Toast.LENGTH_SHORT).show();
         if (errCode == 30003) {
             // wzw 登录成功判断邀请码
             final EditText et = new EditText(this);
@@ -130,13 +128,25 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
+                            startLoginActivity();
                         }
                     })
                     .show();
         } else {
-            Toast.makeText(this, "code "+errCode+"     "+errMsg , Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, errMsg , Toast.LENGTH_SHORT).show();
+            startLoginActivity();
         }
 
+    }
+
+    public static final String ID = "user_id";
+    public static final String NAME = "user_name";
+    private void startLoginActivity() {
+        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+        intent.putExtra(ID, mUserName.getText().toString());
+        intent.putExtra(NAME, mPassword.getText().toString());
+        startActivity(intent);
+        finish();
     }
 
     /**
