@@ -34,7 +34,9 @@ public class CurLiveInfo {
 
     public static void setExpertList(List<MemberID> expertList) {
         CurLiveInfo.expertList.clear();
-        CurLiveInfo.expertList.addAll(expertList);
+        if (expertList != null) {
+            CurLiveInfo.expertList.addAll(expertList);
+        }
     }
     public static int getCurrentRequestCount() {
         return currentRequestCount;
