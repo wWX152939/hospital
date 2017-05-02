@@ -309,7 +309,7 @@ public class UserServerHelper {
                 Sig = data.getString("userSig");
                 token = data.getString("token");
                 Integer role = data.getInt("role");
-                MySelfInfo.getInstance().setId(id);
+                MySelfInfo.getInstance().setId(data.getString("id"));
                 MySelfInfo.getInstance().setPwd(password);
                 MySelfInfo.getInstance().setUserSig(Sig);
                 MySelfInfo.getInstance().setToken(token);

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.tencent.ilivesdk.ILiveCallBack;
@@ -65,6 +66,8 @@ public class LoginHelper extends Presenter {
                 if (result.getErrorCode() == 0) {
                     MySelfInfo.getInstance().writeToCache(mContext);
                     //登录
+                    Log.i("wzw", "trace1 id:" + MySelfInfo.getInstance().getId()
+                        + " getUserSig:" + MySelfInfo.getInstance().getUserSig());
                     iLiveLogin(MySelfInfo.getInstance().getId(), MySelfInfo.getInstance().getUserSig());
                 } else {
                     mLoginView.loginFail("Module_TLSSDK", result.getErrorCode(), result.getErrorInfo());
