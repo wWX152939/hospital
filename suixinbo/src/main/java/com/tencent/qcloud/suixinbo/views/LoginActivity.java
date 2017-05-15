@@ -31,6 +31,7 @@ import java.util.List;
 public class LoginActivity extends BaseActivity implements View.OnClickListener, LoginView {
     TextView mBtnLogin, mBtnRegister;
     EditText mPassWord, mUserName;
+    View mLoginView;
     private static final String TAG = LoginActivity.class.getSimpleName();
     private LoginHelper mLoginHeloper;
     private final int REQUEST_PHONE_PERMISSIONS = 0;
@@ -107,6 +108,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 return;
             }
             mLoginHeloper.standardLogin(mUserName.getText().toString(), mPassWord.getText().toString());
+        } else if (view.getId() == R.id.login_view) {
+            jumpIntoHomeActivity();
         }
     }
 
@@ -115,9 +118,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         mBtnLogin = (TextView) findViewById(R.id.btn_login);
         mUserName = (EditText) findViewById(R.id.username);
         mPassWord = (EditText) findViewById(R.id.password);
+        mLoginView = (View) findViewById(R.id.login_view);
         mBtnRegister = (TextView) findViewById(R.id.registerNewUser);
         mBtnRegister.setOnClickListener(this);
         mBtnLogin.setOnClickListener(this);
+        mLoginView.setOnClickListener(this);
     }
 
 
@@ -148,8 +153,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void loginSucc() {
-        Toast.makeText(LoginActivity.this, "" + MySelfInfo.getInstance().getId() + " login ", Toast.LENGTH_SHORT).show();
-        jumpIntoHomeActivity();
+        Toast.makeText(LoginActivity.this, "" + MySelfInfo.getInstance().getId() + " login_view ", Toast.LENGTH_SHORT).show();
+        mLoginView.setVisibility(View.VISIBLE);
     }
 
     @Override

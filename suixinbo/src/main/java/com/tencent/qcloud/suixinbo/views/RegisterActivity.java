@@ -26,6 +26,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     private EditText mUserName, mPassword, mRepassword, mEmail;
     private TextView mBtnRegister;
     private ImageButton mBtnBack;
+    private View mLoginView;
     QavsdkApplication mMyApplication;
     LoginHelper mLoginHeloper;
     private static final String TAG = RegisterActivity.class.getSimpleName();
@@ -40,8 +41,10 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         mRepassword = (EditText) findViewById(R.id.repassword);
         mBtnRegister = (TextView) findViewById(R.id.btn_register);
         mBtnBack = (ImageButton) findViewById(R.id.back);
+        mLoginView = findViewById(R.id.login_view);
         mBtnBack.setOnClickListener(this);
         mBtnRegister.setOnClickListener(this);
+        mLoginView.setOnClickListener(this);
         mMyApplication = (QavsdkApplication) getApplication();
         mLoginHeloper = new LoginHelper(this, this);
     }
@@ -94,13 +97,15 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
+        } else if (view.getId() == R.id.login_view) {
+            jumpIntoHomeActivity();
         }
     }
 
     @Override
     public void loginSucc() {
-        Toast.makeText(RegisterActivity.this, "" + MySelfInfo.getInstance().getId() + " login ", Toast.LENGTH_SHORT).show();
-        jumpIntoHomeActivity();
+        Toast.makeText(RegisterActivity.this, "" + MySelfInfo.getInstance().getId() + " login_view ", Toast.LENGTH_SHORT).show();
+        mLoginView.setVisibility(View.VISIBLE);
     }
 
     @Override

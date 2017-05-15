@@ -3,8 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/tencent_tls_ui_background"
-    tools:context=".IndependentRegisterActivity">
+    android:background="@color/tencent_tls_ui_background">
 
     <RelativeLayout
         android:orientation="horizontal"
@@ -103,6 +102,13 @@
     </LinearLayout>
 
 
+    <View
+        android:id="@+id/login_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/login_view"
+        android:visibility="gone"
+        />
 
 </LinearLayout>
 
