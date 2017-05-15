@@ -2,20 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/tencent_tls_ui_background">
-
-    <RelativeLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentTop="true"
-        android:background="@color/tencent_tls_ui_titleBackground">
-
-        <TextView
-            style="@style/tencent_tls_ui_titleFontStyle"
-            android:text="@string/tencent_tls_ui_independentLoginTitle"/>
-
-    </RelativeLayout>
+    android:background="@drawable/login_bg"
+    tools:context=".IndependentLoginActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -86,14 +74,27 @@
 
     </LinearLayout>
 
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            style="@style/tencent_tls_ui_titleFontStyle"
+            android:text="@string/tencent_tls_ui_independentLoginTitle"/>
+
+    </RelativeLayout>
+
     <View
         android:id="@+id/login_view"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="@drawable/login_view"
         android:visibility="gone"
         />
-
 
 </RelativeLayout>
 
