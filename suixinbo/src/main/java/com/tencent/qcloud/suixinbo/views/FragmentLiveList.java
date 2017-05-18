@@ -75,7 +75,7 @@ public class FragmentLiveList extends Fragment implements View.OnClickListener, 
 //                    CurLiveInfo.setAddress(item.getLbs().getAddress());
                     startActivity(intent);
                 }else{
-                    Intent intent = new Intent(getActivity(), LiveActivity.class);
+                    Intent intent = new Intent(getActivity(), ActivityPlayRtmp.class);
                     MySelfInfo.getInstance().setIdStatus(Constants.MEMBER);
                     MySelfInfo.getInstance().setJoinRoomWay(false);
                     CurLiveInfo.setHostID(item.getHostId());

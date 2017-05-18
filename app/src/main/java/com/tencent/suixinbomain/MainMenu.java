@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 
+import com.tencent.qcloud.suixinbo.views.ActivityPlayRtmp;
 import com.tencent.qcloud.suixinbo.views.LoginActivity;
 
 //import com.tencent.tdemolive.LiveActivity;
@@ -23,7 +24,7 @@ public class MainMenu extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_mainmenu);
         Intent intent = new Intent();
-        intent.setClass(MainMenu.this, LoginActivity.class);
+        intent.setClass(MainMenu.this, ActivityPlayRtmp.class);
         startActivity(intent);
 
 //        listDemo.add("Live: 简单直播");
