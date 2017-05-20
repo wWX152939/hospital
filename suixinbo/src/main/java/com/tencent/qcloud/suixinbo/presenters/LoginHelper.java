@@ -68,7 +68,7 @@ public class LoginHelper extends Presenter {
                     //登录
                     Log.i("wzw", "trace1 id:" + MySelfInfo.getInstance().getId()
                         + " getUserSig:" + MySelfInfo.getInstance().getUserSig());
-                    iLiveLogin(MySelfInfo.getInstance().getId(), MySelfInfo.getInstance().getUserSig());
+                    iLiveLogin(MySelfInfo.getInstance().getNickName(), MySelfInfo.getInstance().getUserSig());
                 } else {
                     mLoginView.loginFail("Module_TLSSDK", result.getErrorCode(), result.getErrorInfo());
                 }
@@ -144,7 +144,7 @@ public class LoginHelper extends Presenter {
     /**
      * 独立模式 注册
      */
-    public void standardRegister(final String id, final String psw, final String email) {
+    public void standardRegister(final String id, final String psw, final String email, String name) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -172,7 +172,7 @@ public class LoginHelper extends Presenter {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                UserServerHelper.RequestBackInfo result = UserServerHelper.getInstance().logoutId(id);
+                UserServerHelper.RequestBackInfo result = UserServerHelper.getInstance().logoutId();
                 if (result != null && (result.getErrorCode() == 0 || result.getErrorCode() == 10008)) {
                 }
             }

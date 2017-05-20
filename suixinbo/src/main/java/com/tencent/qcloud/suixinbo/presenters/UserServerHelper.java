@@ -310,6 +310,7 @@ public class UserServerHelper {
                 token = data.getString("token");
                 Integer role = data.getInt("role");
                 MySelfInfo.getInstance().setId(data.getString("id"));
+                MySelfInfo.getInstance().setNickName(data.getString("name"));
                 MySelfInfo.getInstance().setPwd(password);
                 MySelfInfo.getInstance().setUserSig(Sig);
                 MySelfInfo.getInstance().setToken(token);
@@ -328,7 +329,7 @@ public class UserServerHelper {
     /**
      * 登出ID （独立方式）
      */
-    public RequestBackInfo logoutId(String id) {
+    public RequestBackInfo logoutId() {
         try {
             JSONObject jasonPacket = new JSONObject();
             // liqiang 登出不需要id

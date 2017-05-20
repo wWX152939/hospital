@@ -133,7 +133,7 @@ public class HomeActivity extends BaseFragmentActivity implements ProfileView, L
             InitBusinessHelper.initApp(getApplicationContext());
             SxbLog.i(TAG, "HomeActivity retry login");
             mLoginHelper = new LoginHelper(this, this);
-            mLoginHelper.iLiveLogin(MySelfInfo.getInstance().getId(), MySelfInfo.getInstance().getUserSig());
+            mLoginHelper.iLiveLogin(MySelfInfo.getInstance().getNickName(), MySelfInfo.getInstance().getUserSig());
         }
     }
 

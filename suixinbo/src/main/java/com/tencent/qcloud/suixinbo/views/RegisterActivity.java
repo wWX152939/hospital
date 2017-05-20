@@ -23,7 +23,7 @@ import com.tencent.qcloud.suixinbo.views.customviews.BaseActivity;
  * 注册账号类
  */
 public class RegisterActivity extends BaseActivity implements View.OnClickListener, LoginView {
-    private EditText mUserName, mPassword, mRepassword, mEmail;
+    private EditText mUserName, mPhone, mPassword, mRepassword, mEmail;
     private TextView mBtnRegister;
     private ImageButton mBtnBack;
     private View mLoginView;
@@ -36,6 +36,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_independent_register);
         mUserName = (EditText) findViewById(R.id.username);
+        mPhone = (EditText) findViewById(R.id.phone);
         mEmail = (EditText) findViewById(R.id.email);
         mPassword = (EditText) findViewById(R.id.password);
         mRepassword = (EditText) findViewById(R.id.repassword);
@@ -59,6 +60,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     public void onClick(View view) {
         if (view.getId() == R.id.btn_register) {
             String userId = mUserName.getText().toString();
+            String phoneNum = mPhone.getText().toString();
             String userPW = mPassword.getText().toString();
             String userEmail = mEmail.getText().toString();
             String userPW2 = mRepassword.getText().toString();
@@ -67,6 +69,11 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
             if (userId.length() < 4 || userId.length() > 24) {
                 Log.i(TAG, "onClick " + userId.length());
                 Toast.makeText(RegisterActivity.this, "用户名不符合格式", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (!Validator.isMobile(phoneNum)) {
+                Toast.makeText(RegisterActivity.this, "手机号不合法", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -91,7 +98,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
             }
 
             //注册一个账号
-            mLoginHeloper.standardRegister(userId, mPassword.getText().toString(), userEmail);
+            mLoginHeloper.standardRegister(phoneNum, mPassword.getText().toString(), userEmail, userId);
         }
         if (view.getId() == R.id.back) {
             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
