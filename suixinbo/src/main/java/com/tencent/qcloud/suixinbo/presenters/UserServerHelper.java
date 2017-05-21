@@ -311,6 +311,7 @@ public class UserServerHelper {
                 Integer role = data.getInt("role");
                 MySelfInfo.getInstance().setId(data.getString("id"));
                 MySelfInfo.getInstance().setNickName(data.getString("name"));
+                Log.i("wzw", "nickname:" + MySelfInfo.getInstance().getNickName());
                 MySelfInfo.getInstance().setPwd(password);
                 MySelfInfo.getInstance().setUserSig(Sig);
                 MySelfInfo.getInstance().setToken(token);

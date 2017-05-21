@@ -24,7 +24,7 @@ public class MainMenu extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_mainmenu);
         Intent intent = new Intent();
-        intent.setClass(MainMenu.this, ActivityPlayRtmp.class);
+        intent.setClass(MainMenu.this, LoginActivity.class);
         startActivity(intent);
 
 //        listDemo.add("Live: 简单直播");

@@ -94,35 +94,35 @@ public class HomeActivity extends BaseFragmentActivity implements ProfileView, L
         mTabHost.getTabWidget().setVisibility(View.GONE);
 
         // 检测是否需要获取头像
-        if (TextUtils.isEmpty(MySelfInfo.getInstance().getAvatar())) {
-            infoHelper = new ProfileInfoHelper(this);
-            infoHelper.getMyProfile();
-        }
-        if (living) {
-            NotifyDialog dialog = new NotifyDialog();
-            dialog.show(getString(R.string.title_living), getSupportFragmentManager(), new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent(HomeActivity.this, LiveActivity.class);
-                    MySelfInfo.getInstance().setIdStatus(Constants.HOST);
-                    MySelfInfo.getInstance().setJoinRoomWay(true);
-                    CurLiveInfo.setHostID(MySelfInfo.getInstance().getId());
-                    CurLiveInfo.setHostName(MySelfInfo.getInstance().getId());
-                    CurLiveInfo.setHostAvator("");
-                    CurLiveInfo.setRoomNum(MySelfInfo.getInstance().getMyRoomNum());
-//                    CurLiveInfo.setMembers(item.getInfo().getMemsize()); // 添加自己
-//                    CurLiveInfo.setAdmires(item.getInfo().getThumbup());
-//                    CurLiveInfo.setAddress(item.getLbs().getAddress());
-                    startActivity(intent);
-                }
-            }, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            });
-        }
+//        if (TextUtils.isEmpty(MySelfInfo.getInstance().getAvatar())) {
+//            infoHelper = new ProfileInfoHelper(this);
+//            infoHelper.getMyProfile();
+//        }
+//        if (living) {
+//            NotifyDialog dialog = new NotifyDialog();
+//            dialog.show(getString(R.string.title_living), getSupportFragmentManager(), new DialogInterface.OnClickListener() {
+//
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    Intent intent = new Intent(HomeActivity.this, LiveActivity.class);
+//                    MySelfInfo.getInstance().setIdStatus(Constants.HOST);
+//                    MySelfInfo.getInstance().setJoinRoomWay(true);
+//                    CurLiveInfo.setHostID(MySelfInfo.getInstance().getId());
+//                    CurLiveInfo.setHostName(MySelfInfo.getInstance().getId());
+//                    CurLiveInfo.setHostAvator("");
+//                    CurLiveInfo.setRoomNum(MySelfInfo.getInstance().getMyRoomNum());
+////                    CurLiveInfo.setMembers(item.getInfo().getMemsize()); // 添加自己
+////                    CurLiveInfo.setAdmires(item.getInfo().getThumbup());
+////                    CurLiveInfo.setAddress(item.getLbs().getAddress());
+//                    startActivity(intent);
+//                }
+//            }, new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//
+//                }
+//            });
+//        }
     }
 
     @Override
@@ -133,7 +133,7 @@ public class HomeActivity extends BaseFragmentActivity implements ProfileView, L
             InitBusinessHelper.initApp(getApplicationContext());
             SxbLog.i(TAG, "HomeActivity retry login");
             mLoginHelper = new LoginHelper(this, this);
-            mLoginHelper.iLiveLogin(MySelfInfo.getInstance().getNickName(), MySelfInfo.getInstance().getUserSig());
+            mLoginHelper.iLiveLogin(MySelfInfo.getInstance().getId(), MySelfInfo.getInstance().getUserSig());
         }
     }
 

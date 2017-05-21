@@ -32,6 +32,7 @@ import com.tencent.qcloud.suixinbo.model.CurLiveInfo;
 import com.tencent.qcloud.suixinbo.model.CustomMsgEntity;
 import com.tencent.qcloud.suixinbo.model.MemberID;
 import com.tencent.qcloud.suixinbo.model.MySelfInfo;
+import com.tencent.qcloud.suixinbo.presenters.UserServerHelper;
 import com.tencent.qcloud.suixinbo.utils.Constants;
 import com.tencent.qcloud.suixinbo.utils.SxbLog;
 import com.tencent.qcloud.suixinbo.views.customviews.BaseActivity;
@@ -78,6 +79,12 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
         mTxlpPlayer.setPlayerView(txvvPlayerView);
         mTxlpPlayer.setConfig(new TXLivePlayConfig());
         mTxlpPlayer.setRenderMode(TXLiveConstants.RENDER_MODE_ADJUST_RESOLUTION);
+
+        requestExpertList();
+    }
+
+    private void requestExpertList() {
+        UserServerHelper.getInstance().requestExpertList(MySelfInfo.getInstance().getToken(), CurLiveInfo.getRoomNum());
     }
 
     @Override
@@ -419,7 +426,6 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
         notifyRefreshListView(entity);
         //mChatMsgListAdapter.notifyDataSetChanged();
 
-        mListViewMsg.setVisibility(View.VISIBLE);
         SxbLog.d(TAG, "refreshTextListView height " + mListViewMsg.getHeight());
 
         if (mListViewMsg.getCount() > 1) {

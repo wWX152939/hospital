@@ -358,9 +358,9 @@ public class ChatMsgListAdapter extends BaseAdapter implements AbsListView.OnScr
         mCreateAnimator = true;
 
         // 调整ListView高度
-        ViewGroup.LayoutParams params = mListView.getLayoutParams();
-        params.height = totalHeight + (mListView.getDividerHeight() * (lineCount - 1));
-        mListView.setLayoutParams(params);
+//        ViewGroup.LayoutParams params = mListView.getLayoutParams();
+//        params.height = totalHeight + (mListView.getDividerHeight() * (lineCount - 1));
+//        mListView.setLayoutParams(params);
     }
 
     /**

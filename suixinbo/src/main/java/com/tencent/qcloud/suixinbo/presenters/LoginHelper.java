@@ -68,7 +68,7 @@ public class LoginHelper extends Presenter {
                     //登录
                     Log.i("wzw", "trace1 id:" + MySelfInfo.getInstance().getId()
                         + " getUserSig:" + MySelfInfo.getInstance().getUserSig());
-                    iLiveLogin(MySelfInfo.getInstance().getNickName(), MySelfInfo.getInstance().getUserSig());
+                    iLiveLogin(MySelfInfo.getInstance().getId(), MySelfInfo.getInstance().getUserSig());
                 } else {
                     mLoginView.loginFail("Module_TLSSDK", result.getErrorCode(), result.getErrorInfo());
                 }

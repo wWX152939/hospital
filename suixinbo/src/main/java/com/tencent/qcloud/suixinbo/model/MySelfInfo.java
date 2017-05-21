@@ -2,6 +2,7 @@ package com.tencent.qcloud.suixinbo.model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.tencent.qcloud.suixinbo.utils.Constants;
 import com.tencent.qcloud.suixinbo.utils.SxbLog;
@@ -86,6 +87,8 @@ public class MySelfInfo {
     }
 
     public void setNickName(String nickName) {
+
+        Log.i("wzw", "setNickName nickname:" + nickName);
         this.nickName = nickName;
     }
 
