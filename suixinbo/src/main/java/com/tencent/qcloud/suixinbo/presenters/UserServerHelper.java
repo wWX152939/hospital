@@ -38,6 +38,8 @@ import okhttp3.Response;
 public class UserServerHelper {
     private static final String TAG = UserServerHelper.class.getSimpleName();
     private static UserServerHelper instance = null;
+    public static final boolean DEBUG = false;
+
 //    public static final String BASE_URL = "https://sxb.qcloud.com/sxb/index.php?";
     // 注册 登录 创建房间 上报创建房结果 拉去直播房间列表 上报进入房间信息 拉取房间成员列表
     public static final String BASE_URL = "http://www.yihucloud.com/liver/index.php?";
@@ -151,10 +153,12 @@ public class UserServerHelper {
 
     public void requestExpertList(final String token, final int roomNum) {
         new Thread(new Runnable() {
+
             @Override
             public void run() {
                 try {
-                    Log.i("wzw", "wzw token:" + token + " roomNum:" + roomNum);
+                    if (DEBUG)
+                        Log.i("wzw", "requestExpertList token:" + token + " roomNum:" + roomNum);
                     JSONObject jasonPacket = new JSONObject();
                     jasonPacket.put("token", token);
                     jasonPacket.put("roomnum", roomNum);
@@ -165,7 +169,6 @@ public class UserServerHelper {
                     int code = response.getInt("errorCode");
                     String errorInfo = response.getString("errorInfo");
 
-                    Log.i("wzw", "wzw code:" + code);
                     if(code == 0){
                         JSONObject data = response.getJSONObject("data");
                         JSONArray record = data.getJSONArray("idlist");
@@ -227,10 +230,11 @@ public class UserServerHelper {
     /**
      * 注册ID （独立方式）
      */
-    public RequestBackInfo registerId(String id, String password, String email) {
+    public RequestBackInfo registerId(String id, String password, String email, String name) {
         try {
             JSONObject jasonPacket = new JSONObject();
             jasonPacket.put("id", id);
+            jasonPacket.put("name", name);
             jasonPacket.put("pwd", password);
             jasonPacket.put("email", email);
             String json = jasonPacket.toString();

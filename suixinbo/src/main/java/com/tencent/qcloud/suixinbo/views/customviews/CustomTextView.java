@@ -63,13 +63,13 @@ public class CustomTextView extends TextView {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        Layout layout = getLayout();
-        if (null != layout){
-            int height = (int) Math.ceil(getMaxLineHeight(this.getText().toString()))
-                    + getCompoundPaddingTop() + getCompoundPaddingBottom();
-            int width = getMeasuredWidth();
-
-            setMeasuredDimension(width, height);
-        }
+//        Layout layout = getLayout();
+//        if (null != layout){
+//            int height = (int) Math.ceil(getMaxLineHeight(this.getText().toString()))
+//                    + getCompoundPaddingTop() + getCompoundPaddingBottom();
+//            int width = getMeasuredWidth();
+//
+//            setMeasuredDimension(width, height);
+//        }
     }
 }

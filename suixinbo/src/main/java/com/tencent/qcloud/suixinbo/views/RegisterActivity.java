@@ -66,9 +66,15 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
             String userPW2 = mRepassword.getText().toString();
 
 
-            if (userId.length() < 4 || userId.length() > 24) {
+            if (userId.length() < 4) {
                 Log.i(TAG, "onClick " + userId.length());
-                Toast.makeText(RegisterActivity.this, "用户名不符合格式", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, "用户名不能少于4个字符", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (userId.length() > 24) {
+                Log.i(TAG, "onClick " + userId.length());
+                Toast.makeText(RegisterActivity.this, "用户名不能大于24个字符", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -155,7 +161,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     public static final String NAME = "user_name";
     private void startLoginActivity() {
         Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-        intent.putExtra(ID, mUserName.getText().toString());
+        intent.putExtra(ID, mPhone.getText().toString());
         intent.putExtra(NAME, mPassword.getText().toString());
         startActivity(intent);
         finish();

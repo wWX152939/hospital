@@ -46,7 +46,6 @@ public class MySelfInfo {
     private boolean bLiveAnimator;  // 渐隐动画
     private SxbLog.SxbLogLevel logLevel;           // 日志等级
 
-
     private int id_status;
 
     private int myRoomNum = -1;

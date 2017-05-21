@@ -1,11 +1,13 @@
 package com.tencent.qcloud.suixinbo.views;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
+import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,6 +46,7 @@ import com.tencent.qcloud.suixinbo.presenters.viewinface.LiveView;
 import com.tencent.qcloud.suixinbo.utils.Constants;
 import com.tencent.qcloud.suixinbo.utils.SxbLog;
 import com.tencent.qcloud.suixinbo.views.customviews.BaseActivity;
+import com.tencent.qcloud.suixinbo.views.customviews.CustomTextView;
 import com.tencent.rtmp.ITXLivePlayListener;
 import com.tencent.rtmp.TXLiveConstants;
 import com.tencent.rtmp.TXLivePlayConfig;
@@ -80,9 +83,32 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
 
     private InputMethodManager imm;
     private RtmpHelper mRtmpHelper;
+    private Timer mHearBeatTimer;
+    private HeartBeatTask mHeartBeatTask;//心跳
 
     private boolean mIsStart = false;
     private boolean mIsFullScreenMode = false;
+
+    //TOP
+
+    private ArrayList<ChatEntity> mTopArrayListChatEntity;
+    private ChatMsgListAdapter mTopChatMsgListAdapter;
+    private ArrayList<ChatEntity> mTopTmpChatList = new ArrayList<ChatEntity>();//缓冲队列
+    private boolean mTopBoolNeedRefresh = false;
+    private boolean mTopBoolRefreshLock = false;
+    private TimerTask mTopTimerTask = null;
+    private ListView mTopListViewMsgItems;
+
+    /**
+     * 直播心跳
+     */
+    private class HeartBeatTask extends TimerTask {
+        @Override
+        public void run() {
+            UserServerHelper.getInstance().heartBeater(MySelfInfo.getInstance().getIdStatus());
+            requestExpertList();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +128,13 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
             @Override
             public void enterRoomComplete(int id_status, boolean succ) {
                 Log.i("wzw", "enterRoomComplete");
+                if (succ == true) {
+                    //主播心跳
+                    mHearBeatTimer = new Timer(true);
+                    mHeartBeatTask = new HeartBeatTask();
+                    mHearBeatTimer.schedule(mHeartBeatTask, 100, 5 * 1000); //5秒重复上报心跳 拉取房间列表
+
+                }
             }
 
             @Override
@@ -117,16 +150,43 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
             @Override
             public void refreshText(String text, String name) {
                 Log.i("wzw", "refreshText");
+                if (text != null) {
+                    refreshTextListView(name, text, Constants.TEXT_TYPE);
+                }
             }
 
             @Override
             public void refreshTopText(String sequence, String text, String name) {
                 Log.i("wzw", "refreshTopText");
+                if (text != null) {
+                    ChatEntity entity = new ChatEntity();
+                    entity.setSenderName("置顶");
+                    entity.setContext(text);
+                    entity.setSequence(sequence);
+                    entity.setType(Constants.TEXT_TYPE);
+                    mTopBoolNeedRefresh = true;
+                    mTopTmpChatList.add(entity);
+                    if (mTopBoolRefreshLock) {
+                        return;
+                    } else {
+                        doTopRefreshListView();
+                    };
+                    //mChatMsgListAdapter.notifyDataSetChanged();
+
+                    mTopListViewMsgItems.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
             public void cancelTopText(String sequence) {
                 Log.i("wzw", "cancelTopText");
+                for (ChatEntity entity : mTopArrayListChatEntity) {
+                    if (entity.getSequence().equals(sequence)) {
+                        mTopArrayListChatEntity.remove(entity);
+                        mTopChatMsgListAdapter.notifyDataSetChanged();
+                        break;
+                    }
+                }
             }
 
             @Override
@@ -205,6 +265,48 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
         requestExpertList();
     }
 
+    private void initTopView() {
+        //wzw add for top
+        mTopListViewMsgItems = (ListView) findViewById(R.id.im_msg_top_listview);
+        mTopArrayListChatEntity = new ArrayList<ChatEntity>();
+        mTopChatMsgListAdapter = new ChatMsgListAdapter(this, mTopListViewMsgItems, mTopArrayListChatEntity) {
+            @Override
+            protected void setTextColor(CustomTextView sendContext) {
+                sendContext.setTextColor(getResources().getColor(R.color.colorRed));
+            }
+
+            @Override
+            protected void setText(CustomTextView sendContext, ChatEntity item, SpannableString spanString) {
+                sendContext.setText(item.getContext());
+            }
+        };
+        mTopListViewMsgItems.setAdapter(mTopChatMsgListAdapter);
+    }
+
+    private void doTopRefreshListView() {
+        if (mTopBoolNeedRefresh) {
+            mTopBoolRefreshLock = true;
+            mTopBoolNeedRefresh = false;
+            mTopArrayListChatEntity.addAll(mTopTmpChatList);
+            mTopTmpChatList.clear();
+            mTopChatMsgListAdapter.notifyDataSetChanged();
+
+            if (null != mTimerTask) {
+                mTimerTask.cancel();
+            }
+            mTopTimerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    mHandler.sendEmptyMessage(REFRESH_TOP_LISTVIEW);
+                }
+            };
+            //mTimer.cancel();
+            mTimer.schedule(mTopTimerTask, MINFRESHINTERVAL);
+        } else {
+            mTopBoolRefreshLock = false;
+        }
+    }
+
     private void requestExpertList() {
         UserServerHelper.getInstance().requestExpertList(MySelfInfo.getInstance().getToken(), CurLiveInfo.getRoomNum());
     }
@@ -226,6 +328,7 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
     protected void onDestroy() {
         super.onDestroy();
         Log.i("wzw", "play onDestroy");
+        mHeartBeatTask.cancel();
         mRtmpHelper.startExitRoom();
     }
 
@@ -325,6 +428,7 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
 
     private void initView(){
         initPopWindow();
+        initTopView();
         mStartView = (LinearLayout) findViewById(R.id.start_view);
         mIMView = (LinearLayout) findViewById(R.id.ll_im);
 
@@ -353,6 +457,7 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
                 mTxlpPlayer.startPlay("rtmp://8525.liveplay.myqcloud.com/live/8525_5c9087d798c08c9e4ff69f2e9e6bc6e2", TXLivePlayer.PLAY_TYPE_LIVE_RTMP);
                 mStartView.setVisibility(View.GONE);
                 mIsStart = true;
+                mHandle.sendEmptyMessageDelayed(0, 3000);
             }
         });
         mImageButtonSwitch.setOnClickListener(new View.OnClickListener() {
@@ -367,6 +472,7 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
                     mImageButtonSwitch.setImageResource(R.drawable.round_play_button);
                     mIsStart = true;
                 }
+                mHandle.sendEmptyMessageDelayed(0, 3000);
             }
         });
         mImageButtonFullScreen.setOnClickListener(new View.OnClickListener() {
@@ -376,6 +482,7 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
                 mIMView.setVisibility(View.GONE);
                 mImageButtonExitFullScreen.setVisibility(View.VISIBLE);
                 mImageButtonFullScreen.setVisibility(View.GONE);
+                mHandle.sendEmptyMessageDelayed(0, 3000);
             }
         });
         mImageButtonExitFullScreen.setOnClickListener(new View.OnClickListener() {
@@ -385,13 +492,16 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
                 mIMView.setVisibility(View.VISIBLE);
                 mImageButtonExitFullScreen.setVisibility(View.GONE);
                 mImageButtonFullScreen.setVisibility(View.VISIBLE);
+                mHandle.sendEmptyMessageDelayed(0, 3000);
             }
         });
         mImageViewSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mEtMsg.getText().length() > 0) {
+                    // send msg
                     sendText("" + mEtMsg.getText());
+
                     imm.showSoftInput(mEtMsg, InputMethodManager.SHOW_FORCED);
                     imm.hideSoftInputFromWindow(mEtMsg.getWindowToken(), 0);
                 } else {
@@ -485,6 +595,7 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
         }
 
         TIMMessage Nmsg = new TIMMessage();
+//        Nmsg.setSender(MySelfInfo.getInstance().getNickName());
         TIMTextElem elem = new TIMTextElem();
         if (flag) {
             msg = getMsgObject(CustomMsgEntity.Guest2LiveGuest, msg);
@@ -587,7 +698,7 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
             msg.put("request", request);
             JSONObject body = new JSONObject();
             body.put("msgContent", msgContent);
-            body.put("sender", MySelfInfo.getInstance().getId());
+            body.put("sender", MySelfInfo.getInstance().getNickName());
             msg.put("msgbody", body);
             msgObject = msg.toString();
             Log.i("wzw", "wzw cmd:" + msgCmd + " content:" + " msg:" + msgObject);
@@ -622,6 +733,9 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
     }
 
     private void refreshTextListView(String name, String context, int type) {
+        // 清空 editText
+        mEtMsg.setText("");
+
         ChatEntity entity = new ChatEntity();
         entity.setSenderName(name);
         entity.setContext(context);
@@ -656,6 +770,7 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
     private ArrayList<ChatEntity> mArrayListChatEntity;
     private ChatMsgListAdapter mChatMsgListAdapter;
     private static final int REFRESH_LISTVIEW = 5;
+    private static final int REFRESH_TOP_LISTVIEW = 6;
 
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
@@ -663,6 +778,9 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
             switch (msg.what) {
                 case REFRESH_LISTVIEW:
                     doRefreshListView();
+                    break;
+                case REFRESH_TOP_LISTVIEW:
+                    doTopRefreshListView();
                     break;
             }
             return false;

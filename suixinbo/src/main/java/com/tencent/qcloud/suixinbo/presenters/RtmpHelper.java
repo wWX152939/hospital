@@ -651,6 +651,7 @@ public class RtmpHelper extends Presenter implements ILiveRoomOption.onRoomDisco
             String cmd = response.getString("cmd");
             if (cmd.equals(CustomMsgEntity.GuestGroupChat)) {
                 JSONObject data = response.getJSONObject("msgbody");
+                name = data.getString("sender");
                 String msgContent = data.getString("msgContent");
                 mLiveView.refreshText(msgContent, name);
             } else if (cmd.equals(CustomMsgEntity.TopMessage)) {
@@ -664,6 +665,7 @@ public class RtmpHelper extends Presenter implements ILiveRoomOption.onRoomDisco
                     String seq = data.getString("sequence");
                     data = response.getJSONObject("msgbody");
                     msgContent = data.getString("msgContent");
+                    name = data.getString("sender");
                     mLiveView.refreshTopText(seq, msgContent, name);
                 }
             } else if (cmd.equals(CustomMsgEntity.CancelTopMessage)) {

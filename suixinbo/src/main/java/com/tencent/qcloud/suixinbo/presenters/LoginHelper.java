@@ -144,11 +144,11 @@ public class LoginHelper extends Presenter {
     /**
      * 独立模式 注册
      */
-    public void standardRegister(final String id, final String psw, final String email, String name) {
+    public void standardRegister(final String id, final String psw, final String email, final String name) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final UserServerHelper.RequestBackInfo result = UserServerHelper.getInstance().registerId(id, psw, email);
+                final UserServerHelper.RequestBackInfo result = UserServerHelper.getInstance().registerId(id, psw, email, name);
                 ((Activity) mContext).runOnUiThread(new Runnable() {
                     public void run() {
 

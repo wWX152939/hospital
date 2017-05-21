@@ -153,7 +153,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void loginSucc() {
-        Toast.makeText(LoginActivity.this, "" + MySelfInfo.getInstance().getId() + " login ", Toast.LENGTH_SHORT).show();
+        Toast.makeText(LoginActivity.this, "" + MySelfInfo.getInstance().getNickName() + " login ", Toast.LENGTH_SHORT).show();
         mLoginView.setVisibility(View.VISIBLE);
     }
 

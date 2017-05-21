@@ -21,6 +21,7 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 android:src="@drawable/exit_fullscreen"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
@@ -61,6 +62,16 @@
                 android:src="@drawable/round_play_button"/>
 
         </LinearLayout>
+        <ListView
+            android:id="@+id/im_msg_top_listview"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:layout_gravity="left|bottom"
+            android:layout_marginBottom="50dp"
+            android:cacheColorHint="#00000000"
+            android:divider="#3c421b1b"
+            android:scrollbarStyle="outsideOverlay"
+            android:transcriptMode="normal" />
     </FrameLayout>
 
 
