@@ -62,7 +62,7 @@ public class FragmentLiveList extends Fragment implements View.OnClickListener, 
                 RoomInfoJson item = roomList.get(i);
                 //如果是自己
                 if (item.getHostId().equals(MySelfInfo.getInstance().getId())) {
-                    Intent intent = new Intent(getActivity(), LiveActivity.class);
+                    Intent intent = new Intent(getActivity(), ActivityPlayRtmp.class);
                     MySelfInfo.getInstance().setIdStatus(Constants.HOST);
                     Log.i("wzw", "trace1 it is host:");
                     MySelfInfo.getInstance().setJoinRoomWay(true);

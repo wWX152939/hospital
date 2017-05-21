@@ -60,6 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center|left"
                 android:textColor="@color/tencent_tls_ui_defaultButtonColor"
+                android:visibility="gone"
                 android:text="微信登录"/>
 
             <TextView

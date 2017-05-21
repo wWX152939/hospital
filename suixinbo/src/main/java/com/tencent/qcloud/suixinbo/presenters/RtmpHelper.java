@@ -41,7 +41,6 @@ import com.tencent.qcloud.suixinbo.presenters.viewinface.LiveView;
 import com.tencent.qcloud.suixinbo.utils.Constants;
 import com.tencent.qcloud.suixinbo.utils.LogConstants;
 import com.tencent.qcloud.suixinbo.utils.SxbLog;
-import com.tencent.qcloud.suixinbo.views.customviews.InputTextMsgDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,7 +56,7 @@ import java.util.Observer;
 /**
  * 直播控制类
  */
-public class LiveHelper extends Presenter implements ILiveRoomOption.onRoomDisconnectListener, Observer {
+public class RtmpHelper extends Presenter implements ILiveRoomOption.onRoomDisconnectListener, Observer {
     private final String TAG = "LiveHelper";
     private LiveView mLiveView;
     public Context mContext;
@@ -142,7 +141,7 @@ public class LiveHelper extends Presenter implements ILiveRoomOption.onRoomDisco
     }
 
 
-    public LiveHelper(Context context, LiveView liveview) {
+    public RtmpHelper(Context context, LiveView liveview) {
         mContext = context;
         mLiveView = liveview;
         MessageEvent.getInstance().addObserver(this);
@@ -160,43 +159,8 @@ public class LiveHelper extends Presenter implements ILiveRoomOption.onRoomDisco
      * 进入房间
      */
     public void startEnterRoom() {
-        if (MySelfInfo.getInstance().isCreateRoom() == true) {
-            startCreateRoom();
-        } else {
-            joinRoom();
-        }
+        joinRoom();
     }
-
-    public void switchRoom(){
-        ILVLiveRoomOption memberOption = new ILVLiveRoomOption(CurLiveInfo.getHostID())
-                .autoCamera(false)
-                .roomDisconnectListener(this)
-                .videoMode(ILiveConstants.VIDEOMODE_BSUPPORT)
-                .controlRole(Constants.NORMAL_MEMBER_ROLE)
-                .authBits(AVRoomMulti.AUTH_BITS_JOIN_ROOM | AVRoomMulti.AUTH_BITS_RECV_AUDIO | AVRoomMulti.AUTH_BITS_RECV_CAMERA_VIDEO | AVRoomMulti.AUTH_BITS_RECV_SCREEN_VIDEO)
-                .videoRecvMode(AVRoomMulti.VIDEO_RECV_MODE_SEMI_AUTO_RECV_CAMERA_VIDEO)
-                .autoMic(false);
-        Log.i("wzw", "wzw join room:" + CurLiveInfo.getRoomNum());
-        ILVLiveManager.getInstance().switchRoom(CurLiveInfo.getRoomNum(), memberOption, new ILiveCallBack() {
-            @Override
-            public void onSuccess(Object data) {
-                ILiveLog.d(TAG, "ILVB-Suixinbo|switchRoom->join room sucess");
-                if (null != mLiveView) {
-                    mLiveView.enterRoomComplete(MySelfInfo.getInstance().getIdStatus(), true);
-                }
-            }
-
-            @Override
-            public void onError(String module, int errCode, String errMsg) {
-                ILiveLog.d(TAG, "ILVB-Suixinbo|switchRoom->join room failed:" + module + "|" + errCode + "|" + errMsg);
-                if (null != mLiveView) {
-                    mLiveView.quiteRoomComplete(MySelfInfo.getInstance().getIdStatus(), true, null);
-                }
-            }
-        });
-        SxbLog.i(TAG, "switchRoom startEnterRoom ");
-    }
-
 
     public void startExitRoom() {
         ILVLiveManager.getInstance().quitRoom(new ILiveCallBack() {
@@ -224,13 +188,6 @@ public class LiveHelper extends Presenter implements ILiveRoomOption.onRoomDisco
         });
 
     }
-
-//    public void perpareQuitRoom(boolean bPurpose) {
-//        if (bPurpose) {
-//            sendGroupCmd(Constants.AVIMCMD_EXITLIVE, "");
-//        }
-//        mLiveView.readyToQuit();
-//    }
 
     /**
      * 发送信令
@@ -574,10 +531,10 @@ public class LiveHelper extends Presenter implements ILiveRoomOption.onRoomDisco
         ILVLiveRoomOption memberOption = new ILVLiveRoomOption(CurLiveInfo.getHostID())
                 .autoCamera(false)
                 .roomDisconnectListener(this)
-                .avsupport(true)
                 .videoMode(ILiveConstants.VIDEOMODE_BSUPPORT)
                 .controlRole(Constants.NORMAL_MEMBER_ROLE)
-                .authBits(AVRoomMulti.AUTH_BITS_JOIN_ROOM | AVRoomMulti.AUTH_BITS_RECV_AUDIO | AVRoomMulti.AUTH_BITS_RECV_CAMERA_VIDEO | AVRoomMulti.AUTH_BITS_RECV_SCREEN_VIDEO)
+                .avsupport(false)
+                .authBits(0)
                 .videoRecvMode(AVRoomMulti.VIDEO_RECV_MODE_SEMI_AUTO_RECV_CAMERA_VIDEO)
                 .autoMic(false);
         int ret = ILVLiveManager.getInstance().joinRoom(CurLiveInfo.getRoomNum(), memberOption, new ILiveCallBack() {

@@ -4,16 +4,20 @@ import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -23,6 +27,7 @@ import com.tencent.TIMElem;
 import com.tencent.TIMMessage;
 import com.tencent.TIMTextElem;
 import com.tencent.TIMUserProfile;
+import com.tencent.av.TIMAvManager;
 import com.tencent.ilivesdk.ILiveCallBack;
 import com.tencent.ilivesdk.core.ILiveRoomManager;
 import com.tencent.qcloud.suixinbo.R;
@@ -30,13 +35,15 @@ import com.tencent.qcloud.suixinbo.adapters.ChatMsgListAdapter;
 import com.tencent.qcloud.suixinbo.model.ChatEntity;
 import com.tencent.qcloud.suixinbo.model.CurLiveInfo;
 import com.tencent.qcloud.suixinbo.model.CustomMsgEntity;
+import com.tencent.qcloud.suixinbo.model.LiveInfoJson;
 import com.tencent.qcloud.suixinbo.model.MemberID;
 import com.tencent.qcloud.suixinbo.model.MySelfInfo;
+import com.tencent.qcloud.suixinbo.presenters.RtmpHelper;
 import com.tencent.qcloud.suixinbo.presenters.UserServerHelper;
+import com.tencent.qcloud.suixinbo.presenters.viewinface.LiveView;
 import com.tencent.qcloud.suixinbo.utils.Constants;
 import com.tencent.qcloud.suixinbo.utils.SxbLog;
 import com.tencent.qcloud.suixinbo.views.customviews.BaseActivity;
-import com.tencent.qcloud.suixinbo.views.customviews.InputTextMsgDialog;
 import com.tencent.rtmp.ITXLivePlayListener;
 import com.tencent.rtmp.TXLiveConstants;
 import com.tencent.rtmp.TXLivePlayConfig;
@@ -56,16 +63,26 @@ import java.util.TimerTask;
 public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListener {
     private final static String TAG = "ActivityPlayRtmp";
     private TXCloudVideoView txvvPlayerView;
-
     private TXLivePlayer mTxlpPlayer;
 
+    private LinearLayout mStartView;
+    private LinearLayout mIMView;
+    private ImageButton mImageButtonStart;
+    private ImageButton mImageButtonSwitch;
+    private ImageButton mImageButtonFullScreen;
+    private ImageButton mImageButtonExitFullScreen;
     private ListView mListViewMsg;
     private ImageView mImageViewBack, mImageViewSend;
     private EditText mEtMsg;
     private PopupWindow mPopupWindow;
     private ViewGroup mContactSelectGroup;
     private ListView mContactSelectListView;
+
     private InputMethodManager imm;
+    private RtmpHelper mRtmpHelper;
+
+    private boolean mIsStart = false;
+    private boolean mIsFullScreenMode = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +97,111 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
         mTxlpPlayer.setConfig(new TXLivePlayConfig());
         mTxlpPlayer.setRenderMode(TXLiveConstants.RENDER_MODE_ADJUST_RESOLUTION);
 
+        mRtmpHelper = new RtmpHelper(this, new LiveView() {
+
+            @Override
+            public void enterRoomComplete(int id_status, boolean succ) {
+                Log.i("wzw", "enterRoomComplete");
+            }
+
+            @Override
+            public void quiteRoomComplete(int id_status, boolean succ, LiveInfoJson liveinfo) {
+                Log.i("wzw", "quiteRoomComplete");
+            }
+
+            @Override
+            public void showInviteDialog() {
+                Log.i("wzw", "showInviteDialog");
+            }
+
+            @Override
+            public void refreshText(String text, String name) {
+                Log.i("wzw", "refreshText");
+            }
+
+            @Override
+            public void refreshTopText(String sequence, String text, String name) {
+                Log.i("wzw", "refreshTopText");
+            }
+
+            @Override
+            public void cancelTopText(String sequence) {
+                Log.i("wzw", "cancelTopText");
+            }
+
+            @Override
+            public void refreshThumbUp() {
+                Log.i("wzw", "refreshThumbUp");
+            }
+
+            @Override
+            public void refreshUI(String id) {
+                Log.i("wzw", "refreshUI");
+            }
+
+            @Override
+            public boolean showInviteView(String id) {
+                return false;
+            }
+
+            @Override
+            public void cancelInviteView(String id) {
+                Log.i("wzw", "cancelInviteView");
+            }
+
+            @Override
+            public void cancelMemberView(String id) {
+                Log.i("wzw", "cancelMemberView");
+            }
+
+            @Override
+            public void memberJoin(String id, String name) {
+                Log.i("wzw", "memberJoin");
+            }
+
+            @Override
+            public void hideInviteDialog() {
+                Log.i("wzw", "hideInviteDialog");
+            }
+
+            @Override
+            public void pushStreamSucc(TIMAvManager.StreamRes streamRes) {
+                Log.i("wzw", "pushStreamSucc");
+            }
+
+            @Override
+            public void stopStreamSucc() {
+                Log.i("wzw", "stopStreamSucc");
+            }
+
+            @Override
+            public void startRecordCallback(boolean isSucc) {
+                Log.i("wzw", "startRecordCallback");
+            }
+
+            @Override
+            public void stopRecordCallback(boolean isSucc, List<String> files) {
+                Log.i("wzw", "stopRecordCallback");
+            }
+
+            @Override
+            public void hostLeave(String id, String name) {
+                Log.i("wzw", "refreshTopText");
+            }
+
+            @Override
+            public void hostBack(String id, String name) {
+                Log.i("wzw", "hostBack");
+            }
+
+            @Override
+            public void refreshMember(ArrayList<MemberID> memlist) {
+                Log.i("wzw", "refreshMember");
+            }
+        });
+
+        mRtmpHelper.startEnterRoom();
+
         requestExpertList();
     }
 
@@ -91,14 +213,20 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
     protected void onResume() {
         super.onResume();
         mTxlpPlayer.setPlayListener(this);
-        mTxlpPlayer.startPlay("rtmp://8525.liveplay.myqcloud.com/live/8525_5c9087d798c08c9e4ff69f2e9e6bc6e2", TXLivePlayer.PLAY_TYPE_LIVE_RTMP);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        Log.i("wzw", "play onPause");
         mTxlpPlayer.stopPlay(false);
         txvvPlayerView.onDestroy();
+    }
+
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i("wzw", "play onDestroy");
+        mRtmpHelper.startExitRoom();
     }
 
     @Override
@@ -182,8 +310,29 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
         }
     }
 
+    private Handler mHandle = new Handler() {
+        @Override
+        public void handleMessage(Message message) {
+            mImageButtonSwitch.setVisibility(View.GONE);
+            if (mIsFullScreenMode) {
+                // fullscreen mode
+                mImageButtonExitFullScreen.setVisibility(View.GONE);
+            } else {
+                mImageButtonFullScreen.setVisibility(View.GONE);
+            }
+        }
+    };
+
     private void initView(){
         initPopWindow();
+        mStartView = (LinearLayout) findViewById(R.id.start_view);
+        mIMView = (LinearLayout) findViewById(R.id.ll_im);
+
+        mImageButtonStart = (ImageButton) findViewById(R.id.ib_start);
+        mImageButtonFullScreen = (ImageButton) findViewById(R.id.ib_fullscreen);
+        mImageButtonExitFullScreen = (ImageButton) findViewById(R.id.ib_exit_fullscreen);
+
+        mImageButtonSwitch = (ImageButton) findViewById(R.id.ib_switch);
         txvvPlayerView = (TXCloudVideoView)findViewById(R.id.txvv_play_view);
         mImageViewBack = (ImageView) findViewById(R.id.iv_back);
         mImageViewSend = (ImageView) findViewById(R.id.iv_send);
@@ -198,6 +347,46 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
 
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(mEtMsg.getWindowToken(), 0);
+        mImageButtonStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mTxlpPlayer.startPlay("rtmp://8525.liveplay.myqcloud.com/live/8525_5c9087d798c08c9e4ff69f2e9e6bc6e2", TXLivePlayer.PLAY_TYPE_LIVE_RTMP);
+                mStartView.setVisibility(View.GONE);
+                mIsStart = true;
+            }
+        });
+        mImageButtonSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mIsStart) {
+                    mTxlpPlayer.stopPlay(false);
+                    mImageButtonSwitch.setImageResource(R.drawable.round_pause_button);
+                    mIsStart = false;
+                } else {
+                    mTxlpPlayer.startPlay("rtmp://8525.liveplay.myqcloud.com/live/8525_5c9087d798c08c9e4ff69f2e9e6bc6e2", TXLivePlayer.PLAY_TYPE_LIVE_RTMP);
+                    mImageButtonSwitch.setImageResource(R.drawable.round_play_button);
+                    mIsStart = true;
+                }
+            }
+        });
+        mImageButtonFullScreen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mIsFullScreenMode = true;
+                mIMView.setVisibility(View.GONE);
+                mImageButtonExitFullScreen.setVisibility(View.VISIBLE);
+                mImageButtonFullScreen.setVisibility(View.GONE);
+            }
+        });
+        mImageButtonExitFullScreen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mIsFullScreenMode = false;
+                mIMView.setVisibility(View.VISIBLE);
+                mImageButtonExitFullScreen.setVisibility(View.GONE);
+                mImageButtonFullScreen.setVisibility(View.VISIBLE);
+            }
+        });
         mImageViewSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -208,6 +397,21 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
                 } else {
                     Toast.makeText(ActivityPlayRtmp.this, "input can not be empty!", Toast.LENGTH_LONG).show();
                 }
+            }
+        });
+
+        txvvPlayerView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                mImageButtonSwitch.setVisibility(View.VISIBLE);
+                if (mIsFullScreenMode) {
+                    // fullscreen mode
+                    mImageButtonExitFullScreen.setVisibility(View.VISIBLE);
+                } else {
+                    mImageButtonFullScreen.setVisibility(View.VISIBLE);
+                }
+                mHandle.sendEmptyMessageDelayed(0, 3000);
+                return false;
             }
         });
 

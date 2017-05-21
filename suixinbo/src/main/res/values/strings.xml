@@ -1,10 +1,8 @@
 <resources>
-    <string name="app_name">Suixinbo</string>
-
     <!-- login re fragment-->
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_register">RegisterActivity</string>
-    <string name="tencent_tls_ui_independentLoginTitle">医疗健康直播</string>
+    <string name="tencent_tls_ui_independentLoginTitle">彩虹奇迹</string>
     <string name="tencent_tls_ui_independentRegisterTitle">用户名注册</string>
     <string name="title_living">是否回到上次直播</string>
     <string name="action_settings">settings</string>
