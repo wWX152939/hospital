@@ -22,6 +22,8 @@
 -keep class com.tencent.**{*;}
 -dontwarn com.tencent.**
 
+-keep class com.yihu.**{*;}
+
 -keep class tencent.**{*;}
 -dontwarn tencent.**
 
