@@ -65,6 +65,7 @@ import java.util.TimerTask;
 
 public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListener {
     private final static String TAG = "ActivityPlayRtmp";
+    private final String mRtmpAddress = "rtmp://4425.liveplay.myqcloud.com/live/4425_fb4eb728355611e791eae435c87f075e";
     private TXCloudVideoView txvvPlayerView;
     private TXLivePlayer mTxlpPlayer;
 
@@ -454,7 +455,7 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
         mImageButtonStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTxlpPlayer.startPlay("rtmp://8525.liveplay.myqcloud.com/live/8525_5c9087d798c08c9e4ff69f2e9e6bc6e2", TXLivePlayer.PLAY_TYPE_LIVE_RTMP);
+                mTxlpPlayer.startPlay(mRtmpAddress, TXLivePlayer.PLAY_TYPE_LIVE_RTMP);
                 mStartView.setVisibility(View.GONE);
                 mIsStart = true;
                 mHandle.sendEmptyMessageDelayed(0, 3000);
@@ -468,7 +469,7 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
                     mImageButtonSwitch.setImageResource(R.drawable.round_pause_button);
                     mIsStart = false;
                 } else {
-                    mTxlpPlayer.startPlay("rtmp://8525.liveplay.myqcloud.com/live/8525_5c9087d798c08c9e4ff69f2e9e6bc6e2", TXLivePlayer.PLAY_TYPE_LIVE_RTMP);
+                    mTxlpPlayer.startPlay(mRtmpAddress, TXLivePlayer.PLAY_TYPE_LIVE_RTMP);
                     mImageButtonSwitch.setImageResource(R.drawable.round_play_button);
                     mIsStart = true;
                 }
