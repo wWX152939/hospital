@@ -342,12 +342,13 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
         Log.v(TAG, "onPlayEvent->event: "+event+"|"+param.getString(TXLiveConstants.EVT_DESCRIPTION));
         //错误还是要明确的报一下
         if (event < 0) {
-            Toast.makeText(getApplicationContext(), param.getString(TXLiveConstants.EVT_DESCRIPTION), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "连接失败，网络异常", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getApplicationContext(), param.getString(TXLiveConstants.EVT_DESCRIPTION), Toast.LENGTH_SHORT).show();
         }
 
-        if (event == TXLiveConstants.PLAY_ERR_NET_DISCONNECT) {
-            finish();
-        }
+//        if (event == TXLiveConstants.PLAY_ERR_NET_DISCONNECT) {
+//            finish();
+//        }
     }
 
     @Override
@@ -428,6 +429,11 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
         }
     };
 
+    private void OnClickDismissBtn() {
+        mHandle.removeMessages(0);
+        mHandle.sendEmptyMessageDelayed(0, 3000);
+    }
+
     private void initView(){
         initPopWindow();
         initTopView();
@@ -474,10 +480,7 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
                     mImageButtonSwitch.setImageResource(com.yihu.hospital.caihongqiji.R.drawable.round_play_button);
                     mIsStart = true;
                 }
-                if (mTouchOver) {
-                    mTouchOver = false;
-                    mHandle.sendEmptyMessageDelayed(0, 3000);
-                }
+                OnClickDismissBtn();
             }
         });
         mImageButtonFullScreen.setOnClickListener(new View.OnClickListener() {
@@ -493,10 +496,8 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
                 mTopListViewMsgItems.setVisibility(View.GONE);
 
                 mImageButtonSwitch.setVisibility(View.GONE);
-                if (mTouchOver) {
-                    mTouchOver = false;
-                    mHandle.sendEmptyMessageDelayed(0, 3000);
-                }
+
+                OnClickDismissBtn();
             }
         });
         mImageButtonExitFullScreen.setOnClickListener(new View.OnClickListener() {
@@ -509,10 +510,8 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
                 mImageButtonFullScreen.setVisibility(View.VISIBLE);
                 mTopListViewMsgItems.setVisibility(View.VISIBLE);
                 mTxlpPlayer.setRenderRotation(TXLiveConstants.RENDER_ROTATION_PORTRAIT);
-                if (mTouchOver) {
-                    mTouchOver = false;
-                    mHandle.sendEmptyMessageDelayed(0, 3000);
-                }
+
+                OnClickDismissBtn();
             }
         });
         mImageViewSend.setOnClickListener(new View.OnClickListener() {
