@@ -38,10 +38,10 @@ android {
 
     signingConfigs{
         release{
-            storeFile file("./tencent.store")
-            storePassword "tencent.com"
-            keyAlias "tencent"
-            keyPassword "tencent.com"
+            storeFile file("./onekey.jks")
+            storePassword "6014659"
+            keyAlias "hospital"
+            keyPassword "6014659"
         }
     }
 //
