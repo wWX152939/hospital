@@ -678,6 +678,8 @@ public class RtmpHelper extends Presenter implements ILiveRoomOption.onRoomDisco
                     String seq = data.getString("sequence");
                     mLiveView.cancelTopText(seq);
                 }
+            } else if (cmd.equals(CustomMsgEntity.AdminExitRoom)) {
+                mLiveView.hostLeave("-1", "-1");
             }
         } catch (JSONException e) {
             e.printStackTrace();

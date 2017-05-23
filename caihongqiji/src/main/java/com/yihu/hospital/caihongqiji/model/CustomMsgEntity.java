@@ -12,6 +12,8 @@ public class CustomMsgEntity {
     public static final String TopMessage = "message/control/topMessage";
     public static final String CancelTopMessage = "message/control/cancelTopMessage";
 
+    public static final String AdminExitRoom = "message/control/adminexitroom";
+
 
     public String getCmd() {
         return cmd;

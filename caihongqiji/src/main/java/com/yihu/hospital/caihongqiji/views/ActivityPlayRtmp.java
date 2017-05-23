@@ -31,6 +31,11 @@ import com.tencent.TIMUserProfile;
 import com.tencent.av.TIMAvManager;
 import com.tencent.ilivesdk.ILiveCallBack;
 import com.tencent.ilivesdk.core.ILiveRoomManager;
+import com.tencent.rtmp.ITXLivePlayListener;
+import com.tencent.rtmp.TXLiveConstants;
+import com.tencent.rtmp.TXLivePlayConfig;
+import com.tencent.rtmp.TXLivePlayer;
+import com.tencent.rtmp.ui.TXCloudVideoView;
 import com.yihu.hospital.caihongqiji.adapters.ChatMsgListAdapter;
 import com.yihu.hospital.caihongqiji.model.ChatEntity;
 import com.yihu.hospital.caihongqiji.model.CurLiveInfo;
@@ -45,11 +50,6 @@ import com.yihu.hospital.caihongqiji.utils.Constants;
 import com.yihu.hospital.caihongqiji.utils.SxbLog;
 import com.yihu.hospital.caihongqiji.views.customviews.BaseActivity;
 import com.yihu.hospital.caihongqiji.views.customviews.CustomTextView;
-import com.tencent.rtmp.ITXLivePlayListener;
-import com.tencent.rtmp.TXLiveConstants;
-import com.tencent.rtmp.TXLivePlayConfig;
-import com.tencent.rtmp.TXLivePlayer;
-import com.tencent.rtmp.ui.TXCloudVideoView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -246,6 +246,10 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
             @Override
             public void hostLeave(String id, String name) {
                 Log.i("wzw", "refreshTopText");
+                if (id.equals("-1") && name.equals("-1")) {
+                    //exit room
+                    exitRoom();
+                }
             }
 
             @Override
@@ -262,6 +266,10 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
         mRtmpHelper.startEnterRoom();
 
         requestExpertList();
+    }
+
+    private void exitRoom() {
+        finish();
     }
 
     private void initTopView() {
@@ -320,13 +328,15 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
     protected void onPause() {
         super.onPause();
         Log.i("wzw", "play onPause");
-        mTxlpPlayer.stopPlay(false);
-        txvvPlayerView.onDestroy();
     }
 
     protected void onDestroy() {
         super.onDestroy();
         Log.i("wzw", "play onDestroy");
+        if (mTxlpPlayer.isPlaying()) {
+            mTxlpPlayer.stopPlay(false);
+        }
+        txvvPlayerView.onDestroy();
         mHeartBeatTask.cancel();
         mRtmpHelper.startExitRoom();
     }
