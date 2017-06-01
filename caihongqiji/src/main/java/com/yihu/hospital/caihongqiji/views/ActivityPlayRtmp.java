@@ -1,6 +1,10 @@
 package com.yihu.hospital.caihongqiji.views;
 
+import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,6 +40,7 @@ import com.tencent.rtmp.TXLiveConstants;
 import com.tencent.rtmp.TXLivePlayConfig;
 import com.tencent.rtmp.TXLivePlayer;
 import com.tencent.rtmp.ui.TXCloudVideoView;
+import com.yihu.hospital.caihongqiji.R;
 import com.yihu.hospital.caihongqiji.adapters.ChatMsgListAdapter;
 import com.yihu.hospital.caihongqiji.model.ChatEntity;
 import com.yihu.hospital.caihongqiji.model.CurLiveInfo;
@@ -88,6 +93,7 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
     private boolean mIsStart = false;
     private boolean mIsFullScreenMode = false;
 
+    private AlertDialog.Builder mAlertDialogBuilder;
     //TOP
 
     private ArrayList<ChatEntity> mTopArrayListChatEntity;
@@ -269,6 +275,7 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
     }
 
     private void exitRoom() {
+        Toast.makeText(this, "管理员已关闭房间，退出房间", Toast.LENGTH_LONG).show();
         finish();
     }
 
@@ -339,6 +346,11 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
         txvvPlayerView.onDestroy();
         mHeartBeatTask.cancel();
         mRtmpHelper.startExitRoom();
+    }
+
+    @Override
+    public void onBackPressed() {
+        mAlertDialogBuilder.show();
     }
 
     @Override
@@ -460,10 +472,20 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
         mImageViewSend = (ImageView) findViewById(com.yihu.hospital.caihongqiji.R.id.iv_send);
         mEtMsg = (EditText) findViewById(com.yihu.hospital.caihongqiji.R.id.et_msg);
         mListViewMsg = (ListView) findViewById(com.yihu.hospital.caihongqiji.R.id.list_view);
+
+        mAlertDialogBuilder = new AlertDialog.Builder(this)
+                .setMessage("确定要退出房间吗？")
+                .setPositiveButton(getString(R.string.btn_sure), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .setNegativeButton(getString(R.string.btn_cancel), null);
         mImageViewBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                mAlertDialogBuilder.show();
             }
         });
 
