@@ -104,6 +104,9 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
     private TimerTask mTopTimerTask = null;
     private ListView mTopListViewMsgItems;
 
+    // tv
+    private TextView mTextViewExpert;
+
     /**
      * 直播心跳
      */
@@ -459,6 +462,9 @@ public class ActivityPlayRtmp extends BaseActivity implements ITXLivePlayListene
     private void initView(){
         initPopWindow();
         initTopView();
+        mTextViewExpert = (TextView) findViewById(R.id.tv_title_2);
+        mTextViewExpert.setText(CurLiveInfo.getHostName());
+
         mStartView = (LinearLayout) findViewById(com.yihu.hospital.caihongqiji.R.id.start_view);
         mIMView = (LinearLayout) findViewById(com.yihu.hospital.caihongqiji.R.id.ll_im);
 

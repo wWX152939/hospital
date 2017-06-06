@@ -23,7 +23,7 @@ import com.yihu.hospital.caihongqiji.views.customviews.BaseActivity;
  * 注册账号类
  */
 public class RegisterActivity extends BaseActivity implements View.OnClickListener, LoginView {
-    private EditText mUserName, mPhone, mPassword, mRepassword, mEmail;
+    private EditText mUserName, mPhone, mPassword, mRepassword, mEmail, mCheckCode;
     private TextView mBtnRegister;
     private ImageButton mBtnBack;
     private View mLoginView;
@@ -40,6 +40,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         mEmail = (EditText) findViewById(R.id.email);
         mPassword = (EditText) findViewById(R.id.password);
         mRepassword = (EditText) findViewById(R.id.repassword);
+        mCheckCode = (EditText) findViewById(R.id.check_code);
         mBtnRegister = (TextView) findViewById(R.id.btn_register);
         mBtnBack = (ImageButton) findViewById(R.id.back);
         mLoginView = findViewById(R.id.login_view);
@@ -64,7 +65,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
             String userPW = mPassword.getText().toString();
             String userEmail = mEmail.getText().toString();
             String userPW2 = mRepassword.getText().toString();
-
+            String checkCode = mCheckCode.getText().toString();
 
             if (userId.length() < 4) {
                 Log.i(TAG, "onClick " + userId.length());
@@ -103,8 +104,13 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                 return;
             }
 
+            if (checkCode.length() != 6) {
+                Toast.makeText(RegisterActivity.this, "请输入六位邀请码", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             //注册一个账号
-            mLoginHeloper.standardRegister(phoneNum, mPassword.getText().toString(), userEmail, userId);
+            mLoginHeloper.standardRegister(phoneNum, mPassword.getText().toString(), userEmail, userId, checkCode);
         }
         if (view.getId() == R.id.back) {
             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
@@ -117,7 +123,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void loginSucc() {
-        Toast.makeText(RegisterActivity.this, "" + MySelfInfo.getInstance().getId() + " login_view ", Toast.LENGTH_SHORT).show();
+        Toast.makeText(RegisterActivity.this, "" + MySelfInfo.getInstance().getNickName() + " login ", Toast.LENGTH_SHORT).show();
         mLoginView.setVisibility(View.VISIBLE);
     }
 

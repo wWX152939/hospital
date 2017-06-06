@@ -230,13 +230,14 @@ public class UserServerHelper {
     /**
      * 注册ID （独立方式）
      */
-    public RequestBackInfo registerId(String id, String password, String email, String name) {
+    public RequestBackInfo registerId(String id, String password, String email, String name, String checkcode) {
         try {
             JSONObject jasonPacket = new JSONObject();
             jasonPacket.put("id", id);
             jasonPacket.put("name", name);
             jasonPacket.put("pwd", password);
             jasonPacket.put("email", email);
+            jasonPacket.put("code", checkcode);
             String json = jasonPacket.toString();
             String res = post(REGISTER, json);
             JSONTokener jsonParser = new JSONTokener(res);

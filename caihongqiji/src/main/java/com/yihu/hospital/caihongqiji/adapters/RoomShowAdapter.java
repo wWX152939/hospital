@@ -86,7 +86,7 @@ public class RoomShowAdapter extends ArrayAdapter<RoomInfoJson> {
 //            req.load(data.getHost().getAvatar()).transform(new GlideCircleTransform(mActivity)).into(holder.ivAvatar);
         }
 
-        holder.tvTitle.setText(UIUtils.getLimitString(data.getInfo().getTitle(), 10));
+        holder.tvTitle.setText(UIUtils.getLimitString(data.getName(), 10));
         if (!TextUtils.isEmpty("")){
 //            holder.tvHost.setText("@" + UIUtils.getLimitString(data.getHost().getUsername(), 10));
         }else{

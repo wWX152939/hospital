@@ -142,30 +142,6 @@ public class LoginHelper extends Presenter {
 
 
     /**
-     * 独立模式 注册
-     */
-    public void standardRegister(final String id, final String psw, final String email, final String name) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final UserServerHelper.RequestBackInfo result = UserServerHelper.getInstance().registerId(id, psw, email, name);
-                ((Activity) mContext).runOnUiThread(new Runnable() {
-                    public void run() {
-
-                        if (result != null && result.getErrorCode() == 0) {
-                            standardLogin(id, psw);
-                        } else if (result != null) {
-                            //
-                            Toast.makeText(mContext, "  " + result.getErrorCode() + " : " + result.getErrorInfo(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-        }).start();
-    }
-
-
-    /**
      * 独立模式 登出
      */
     public void standardLogout(final String id) {
@@ -178,6 +154,47 @@ public class LoginHelper extends Presenter {
             }
         }).start();
         iLiveLogout();
+    }
+
+
+    /**
+     * 独立模式 注册
+     */
+    public void standardRegister(final String id, final String psw, final String email, final String name, final String checkcode) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final UserServerHelper.RequestBackInfo result = UserServerHelper.getInstance().registerId(id, psw, email, name, checkcode);
+                ((Activity) mContext).runOnUiThread(new Runnable() {
+                    public void run() {
+
+                        if (result != null && result.getErrorCode() == 0) {
+                            standardLogin(id, psw);
+                        } else if (result != null) {
+                            //
+                            switch (result.getErrorCode()) {
+                                case 10004:
+                                    //ERR_REGISTER_USER_EXIST
+                                    Toast.makeText(mContext, "手机号已被注册", Toast.LENGTH_SHORT).show();
+                                    break;
+                                case 30002:
+                                    Toast.makeText(mContext, "邀请码错误", Toast.LENGTH_SHORT).show();
+                                    break;
+                                case 60001:
+                                    //ERR_REGISTER_EMAIL_EXIST
+                                    Toast.makeText(mContext, "邮箱已被注册", Toast.LENGTH_SHORT).show();
+                                    break;
+                                case 60002:
+                                    //ERR_REGISTER_NAME_EXIST
+                                    Toast.makeText(mContext, "用户名已存在", Toast.LENGTH_SHORT).show();
+                                    break;
+                            }
+//                            Toast.makeText(mContext, "  " + result.getErrorCode() + " : " + result.getErrorInfo(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        }).start();
     }
 
 

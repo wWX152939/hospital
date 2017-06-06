@@ -5,6 +5,25 @@ package com.yihu.hospital.caihongqiji.model;
  */
 public class RoomInfoJson {
     private String uid;
+    private String name;
+
+    public String getSubname() {
+        return subname;
+    }
+
+    public void setSubname(String subname) {
+        this.subname = subname;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    private String subname;
     private INFO info;
 
     public LBS getLbs() {
@@ -107,13 +126,13 @@ public class RoomInfoJson {
     @Override
     public String toString() {
         return "RoomInfoJson{" +
-                ", uid='" + uid + '\'' +
-                ", info='" + info + '\'' +
+                "uid='" + uid + '\'' +
+                ", name='" + name + '\'' +
+                ", subname='" + subname + '\'' +
+                ", info=" + info +
                 ", lbs=" + lbs +
                 '}';
     }
-
-
 
 
 }

@@ -53,7 +53,7 @@ public class FragmentLiveList extends Fragment implements View.OnClickListener, 
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(android.R.color.holo_blue_bright), getResources().getColor(android.R.color.holo_green_light),
                 getResources().getColor(android.R.color.holo_orange_light),getResources().getColor(android.R.color.holo_red_light));
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        roomShowAdapter =new RoomShowAdapter(getActivity(), R.layout.item_liveshow, roomList);
+        roomShowAdapter = new RoomShowAdapter(getActivity(), R.layout.item_liveshow, roomList);
         mLiveList.setAdapter(roomShowAdapter);
         mLiveList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -79,7 +79,8 @@ public class FragmentLiveList extends Fragment implements View.OnClickListener, 
                     MySelfInfo.getInstance().setIdStatus(Constants.MEMBER);
                     MySelfInfo.getInstance().setJoinRoomWay(false);
                     CurLiveInfo.setHostID(item.getHostId());
-                    CurLiveInfo.setHostName("");
+                    //TODO
+                    CurLiveInfo.setHostName(item.getSubname());
                     CurLiveInfo.setHostAvator("");
                     Log.i("wzw", "trace1 it is member room_id:" + item.getInfo().getRoomnum());
                     CurLiveInfo.setRoomNum(item.getInfo().getRoomnum());
