@@ -57,6 +57,9 @@
         <activity android:name="com.yihu.hospital.caihongqiji.views.HomeActivity"
             android:screenOrientation="portrait"
             />
+        <activity android:name="com.yihu.hospital.caihongqiji.views.RoomListActivity"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name="com.yihu.hospital.caihongqiji.views.PublishLiveActivity"
             android:screenOrientation="portrait"

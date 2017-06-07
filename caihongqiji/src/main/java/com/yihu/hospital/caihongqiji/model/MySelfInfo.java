@@ -14,6 +14,15 @@ public class MySelfInfo {
     private static final String TAG = MySelfInfo.class.getSimpleName();
     private String id;
 
+    public boolean isLogout() {
+        return isLogout;
+    }
+
+    public void setLogout(boolean logout) {
+        isLogout = logout;
+    }
+
+    private boolean isLogout = false;
     public String getPwd() {
         return pwd;
     }
@@ -142,6 +151,7 @@ public class MySelfInfo {
     public void writeToCache(Context context) {
         SharedPreferences settings = context.getSharedPreferences(Constants.USER_INFO, 0);
         SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean(Constants.USER_LOGOUT, isLogout);
         editor.putString(Constants.USER_ID, id);
         editor.putString(Constants.USER_PWD, pwd);
         editor.putString(Constants.USER_SIG, userSig);
@@ -166,6 +176,7 @@ public class MySelfInfo {
         SharedPreferences sharedata = context.getSharedPreferences(Constants.USER_INFO, 0);
         id = sharedata.getString(Constants.USER_ID, null);
         pwd = sharedata.getString(Constants.USER_PWD, "");
+        isLogout = sharedata.getBoolean(Constants.USER_LOGOUT, false);
         userSig = sharedata.getString(Constants.USER_SIG, null);
         token = sharedata.getString(Constants.USER_TOKEN,null);
         myRoomNum = sharedata.getInt(Constants.USER_ROOM_NUM, -1);

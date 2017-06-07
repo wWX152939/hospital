@@ -64,6 +64,7 @@ public class LoginHelper extends Presenter {
 
             if (result != null) {
                 if (result.getErrorCode() == 0) {
+                    MySelfInfo.getInstance().setLogout(false);
                     MySelfInfo.getInstance().writeToCache(mContext);
                     //登录
                     Log.i("wzw", "trace1 id:" + MySelfInfo.getInstance().getId()

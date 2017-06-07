@@ -1,14 +1,18 @@
 package com.yihu.hospital.caihongqiji.views;
 
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTabHost;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TabHost;
+import android.widget.TextView;
 
 import com.tencent.TIMUserProfile;
 import com.tencent.ilivesdk.ILiveSDK;
@@ -21,168 +25,101 @@ import com.yihu.hospital.caihongqiji.presenters.viewinface.LogoutView;
 import com.yihu.hospital.caihongqiji.presenters.viewinface.ProfileView;
 import com.yihu.hospital.caihongqiji.utils.SxbLog;
 import com.yihu.hospital.caihongqiji.views.customviews.BaseFragmentActivity;
+import com.yihu.hospital.caihongqiji.views.customviews.BaseViewPager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 主界面
  */
-public class HomeActivity extends BaseFragmentActivity implements ProfileView, LogoutView {
-    private FragmentTabHost mTabHost;
-    private LayoutInflater layoutInflater;
-    private ProfileInfoHelper infoHelper;
+public class HomeActivity extends BaseFragmentActivity implements LogoutView {
     private LoginHelper mLoginHelper;
-    private final Class fragmentArray[] = {FragmentList.class, FragmentPublish.class, FragmentProfile.class};
-    private int mImageViewArray[] = {R.drawable.tab_live, R.drawable.icon_publish, R.drawable.tab_profile};
-    private String mTextviewArray[] = {"live", "publish", "profile"};
     private static final String TAG = HomeActivity.class.getSimpleName();
 
+    private TextView mTextView1, mTextView2, mTextView3;
+    private Button mButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.home_layout);
+        List<View> viewList = new ArrayList<>();
+        View view1 = getLayoutInflater().inflate(R.layout.home_activity_1, null);
+        View view2 = getLayoutInflater().inflate(R.layout.home_activity_2, null);
+        View view3 = getLayoutInflater().inflate(R.layout.home_activity_3, null);
+        initView2(view2);
+        initView3(view3);
+        viewList.add(view1);
+        viewList.add(view2);
+        viewList.add(view3);
+        BaseViewPager viewPager = new BaseViewPager(this, viewList);
+        setContentView(viewPager.getRootView());
         SxbLog.i(TAG, "HomeActivity onCreate");
-        SharedPreferences pref = getSharedPreferences("data", MODE_PRIVATE);
-        boolean living = pref.getBoolean("living", false);
-        mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
-        layoutInflater = LayoutInflater.from(this);
-        mTabHost.setup(this, getSupportFragmentManager(), R.id.contentPanel);
+    }
 
-        int fragmentCount = fragmentArray.length;
-
-        // wzw 注释掉publish
-//        for (int i = 0; i < fragmentCount; i++) {
-//            //为每一个Tab按钮设置图标、文字和内容
-//            TabHost.TabSpec tabSpec = mTabHost.newTabSpec(mTextviewArray[i]).setIndicator(getTabItemView(i));
-//            //将Tab按钮添加进Tab选项卡中
-//            mTabHost.addTab(tabSpec, fragmentArray[i], null);
-//            mTabHost.getTabWidget().setDividerDrawable(null);
-//
-//        }
-//        mTabHost.getTabWidget().getChildTabViewAt(1).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-////                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-////                DialogFragment newFragment = InputDialog.newInstance();
-////                newFragment.show(ft, "dialog");
-//
-//                startActivity(new Intent(HomeActivity.this, PublishLiveActivity.class));
-//
-//            }
-//        });
-
-        // wzw publish隐藏
-        for (int i = 0; i < fragmentCount; i++) {
-            if (i == 1) {
-                continue;
+    private void initView2(View rootView) {
+        rootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, RoomListActivity.class);
+                startActivity(intent);
+                finish();
             }
-            //为每一个Tab按钮设置图标、文字和内容
-            TabHost.TabSpec tabSpec = mTabHost.newTabSpec(mTextviewArray[i]).setIndicator(getTabItemView(i));
-            //将Tab按钮添加进Tab选项卡中
-            mTabHost.addTab(tabSpec, fragmentArray[i], null);
-            mTabHost.getTabWidget().setDividerDrawable(null);
+        });
+    }
 
-        }
+    private void initView3(View rootView) {
+        mTextView1 = (TextView) rootView.findViewById(R.id.tv12);
+        mTextView2 = (TextView) rootView.findViewById(R.id.tv22);
+        mTextView3 = (TextView) rootView.findViewById(R.id.tv32);
+        mButton = (Button) rootView.findViewById(R.id.btn_exit);
 
-        // wzw 隐藏tabwidget
-        mTabHost.getTabWidget().setVisibility(View.GONE);
+        mTextView1.setText(MySelfInfo.getInstance().getNickName());
+        mTextView2.setText(MySelfInfo.getInstance().getId());
+        mTextView3.setText(MySelfInfo.getInstance().getNickName());
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mLoginHelper == null) {
+                    mLoginHelper = new LoginHelper(HomeActivity.this, HomeActivity.this);
+                }
 
-        // 检测是否需要获取头像
-//        if (TextUtils.isEmpty(MySelfInfo.getInstance().getAvatar())) {
-//            infoHelper = new ProfileInfoHelper(this);
-//            infoHelper.getMyProfile();
-//        }
-//        if (living) {
-//            NotifyDialog dialog = new NotifyDialog();
-//            dialog.show(getString(R.string.title_living), getSupportFragmentManager(), new DialogInterface.OnClickListener() {
-//
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    Intent intent = new Intent(HomeActivity.this, LiveActivity.class);
-//                    MySelfInfo.getInstance().setIdStatus(Constants.HOST);
-//                    MySelfInfo.getInstance().setJoinRoomWay(true);
-//                    CurLiveInfo.setHostID(MySelfInfo.getInstance().getId());
-//                    CurLiveInfo.setHostName(MySelfInfo.getInstance().getId());
-//                    CurLiveInfo.setHostAvator("");
-//                    CurLiveInfo.setRoomNum(MySelfInfo.getInstance().getMyRoomNum());
-////                    CurLiveInfo.setMembers(item.getInfo().getMemsize()); // 添加自己
-////                    CurLiveInfo.setAdmires(item.getInfo().getThumbup());
-////                    CurLiveInfo.setAddress(item.getLbs().getAddress());
-//                    startActivity(intent);
-//                }
-//            }, new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//
-//                }
-//            });
-//        }
+                mLoginHelper.standardLogout(MySelfInfo.getInstance().getId());
+            }
+        });
     }
 
     @Override
     protected void onStart() {
         SxbLog.i(TAG, "HomeActivity onStart");
         super.onStart();
-        if (ILiveSDK.getInstance().getAVContext() == null) {//retry
-            InitBusinessHelper.initApp(getApplicationContext());
-            SxbLog.i(TAG, "HomeActivity retry login");
-            mLoginHelper = new LoginHelper(this, this);
-            mLoginHelper.iLiveLogin(MySelfInfo.getInstance().getId(), MySelfInfo.getInstance().getUserSig());
-        }
-    }
-
-    private View getTabItemView(int index) {
-        View view = layoutInflater.inflate(R.layout.tab_content, null);
-        ImageView icon = (ImageView) view.findViewById(R.id.tab_icon);
-        icon.setImageResource(mImageViewArray[index]);
-        return view;
     }
 
     public void onBackPressed() {
-        SxbLog.i(TAG, "onBackPressed");
-        if (mLoginHelper == null) {
-            mLoginHelper = new LoginHelper(this, this);
-        }
-
-        mLoginHelper.standardLogout(MySelfInfo.getInstance().getId());
+        super.onBackPressed();
+        Log.i(TAG, "onBackPressed");
+//        if (mLoginHelper == null) {
+//            mLoginHelper = new LoginHelper(this, this);
+//        }
+//
+//        mLoginHelper.standardLogout(MySelfInfo.getInstance().getId());
     }
 
     @Override
     protected void onDestroy() {
-        SxbLog.i(TAG, "HomeActivity onDestroy");
+        Log.i(TAG, "HomeActivity onDestroy");
         super.onDestroy();
     }
 
-    @Override
-    public void updateProfileInfo(TIMUserProfile profile) {
-        SxbLog.i(TAG, "updateProfileInfo");
-        if (null != profile) {
-            MySelfInfo.getInstance().setAvatar(profile.getFaceUrl());
-            if (!TextUtils.isEmpty(profile.getNickName())) {
-                MySelfInfo.getInstance().setNickName(profile.getNickName());
-            } else {
-                MySelfInfo.getInstance().setNickName(profile.getIdentifier());
-            }
-        }
-    }
-
-    @Override
-    public void updateUserInfo(int reqid, List<TIMUserProfile> profiles) {
-    }
 
     @Override
     public void logoutSucc() {
-//        if (mLoginHelper != null) {
-//            mLoginHelper.onDestory();
-//        }
-        SxbLog.i(TAG, "HomeActivity logoutSucc");
-
+        Log.i(TAG, "HomeActivity logoutSucc");
+        MySelfInfo.getInstance().setLogout(true);
+        MySelfInfo.getInstance().writeToCache(this);
+        Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+        startActivity(intent);
         finish();
-//        super.onBackPressed();
-//        Intent intent = new Intent();
-//        intent.setClass(this, LoginActivity.class);
-//        startActivity(intent);
     }
 
     @Override

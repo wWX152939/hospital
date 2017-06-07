@@ -30,7 +30,6 @@ import java.util.List;
  */
 public class LoginActivity extends BaseActivity implements View.OnClickListener, LoginView {
     TextView mBtnLogin, mBtnRegister;
-    View mLoginView;
     EditText mPassWord, mUserName;
     private static final String TAG = LoginActivity.class.getSimpleName();
     private LoginHelper mLoginHeloper;
@@ -55,13 +54,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         checkPermission();
         //获取个人数据本地缓存
         MySelfInfo.getInstance().getCache(getApplicationContext());
-//        if (needLogin() == true) {//本地没有账户需要登录
-//            initView();
-//        } else {
-//            //有账户登录直接IM登录
-//            SxbLog.i(TAG, "LoginActivity onCreate");
-//            mLoginHeloper.iLiveLogin(MySelfInfo.getInstance().getId(), MySelfInfo.getInstance().getUserSig());
-//        }
+        if (needLogin() == true) {//本地没有账户需要登录
+            initView();
+        } else {
+            //有账户登录直接IM登录
+            SxbLog.i(TAG, "LoginActivity onCreate");
+            mLoginHeloper.iLiveLogin(MySelfInfo.getInstance().getId(), MySelfInfo.getInstance().getUserSig());
+        }
 
         initView();
 
@@ -108,21 +107,17 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 return;
             }
             mLoginHeloper.standardLogin(mUserName.getText().toString(), mPassWord.getText().toString());
-        } else if (view.getId() == R.id.login_view) {
-            jumpIntoHomeActivity();
         }
     }
 
     private void initView() {
         setContentView(R.layout.activity_independent_login);
         mBtnLogin = (TextView) findViewById(R.id.btn_login);
-        mLoginView = findViewById(R.id.login_view);
         mUserName = (EditText) findViewById(R.id.username);
         mPassWord = (EditText) findViewById(R.id.password);
         mBtnRegister = (TextView) findViewById(R.id.registerNewUser);
         mBtnRegister.setOnClickListener(this);
         mBtnLogin.setOnClickListener(this);
-        mLoginView.setOnClickListener(this);
     }
 
 
@@ -132,7 +127,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
      * @return true 代表需要重新登录
      */
     public boolean needLogin() {
-        if (MySelfInfo.getInstance().getId() != null) {
+        if (MySelfInfo.getInstance().getId() != null && !MySelfInfo.getInstance().isLogout()) {
             return false;//有账号不需要登录
         } else {
             return true;//需要登录
@@ -154,7 +149,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public void loginSucc() {
         Toast.makeText(LoginActivity.this, "" + MySelfInfo.getInstance().getNickName() + " login ", Toast.LENGTH_SHORT).show();
-        mLoginView.setVisibility(View.VISIBLE);
+        jumpIntoHomeActivity();
     }
 
     @Override

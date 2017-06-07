@@ -11,6 +11,8 @@ public class Constants {
 
     public static final String USER_INFO = "user_info";
 
+    public static final String USER_LOGOUT = "user_logout";
+
     public static final String USER_ID = "user_id";
 
     public static final String USER_PWD = "user_pwd";
