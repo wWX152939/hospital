@@ -118,6 +118,7 @@ public class HomeActivity extends BaseFragmentActivity implements LogoutView {
         MySelfInfo.getInstance().setLogout(true);
         MySelfInfo.getInstance().writeToCache(this);
         Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+        intent.putExtra(LoginActivity.USER_EXIT, true);
         startActivity(intent);
         finish();
     }

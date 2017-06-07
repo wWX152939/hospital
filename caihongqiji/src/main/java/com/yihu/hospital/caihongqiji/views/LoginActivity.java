@@ -29,8 +29,11 @@ import java.util.List;
  * 登录类
  */
 public class LoginActivity extends BaseActivity implements View.OnClickListener, LoginView {
+    public static final String USER_EXIT = "user_exit";
     TextView mBtnLogin, mBtnRegister;
     EditText mPassWord, mUserName;
+    View mLoginView;
+
     private static final String TAG = LoginActivity.class.getSimpleName();
     private LoginHelper mLoginHeloper;
     private final int REQUEST_PHONE_PERMISSIONS = 0;
@@ -39,7 +42,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         InitBusinessHelper.initApp(getApplicationContext());
-        SxbLog.i(TAG, "LoginActivity onCreate");
+        Log.i(TAG, "wzw LoginActivity onCreate");
         mLoginHeloper = new LoginHelper(this, this, new LogoutView() {
             @Override
             public void logoutSucc() {
@@ -54,11 +57,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         checkPermission();
         //获取个人数据本地缓存
         MySelfInfo.getInstance().getCache(getApplicationContext());
+
+        Log.d(TAG, "wzw 1id:" + MySelfInfo.getInstance().getId() + "logout:" + MySelfInfo.getInstance().isLogout());
         if (needLogin() == true) {//本地没有账户需要登录
+            Log.i(TAG, "wzw LoginActivity onCreate initView");
             initView();
         } else {
             //有账户登录直接IM登录
-            SxbLog.i(TAG, "LoginActivity onCreate");
+            Log.i(TAG, "wzw LoginActivity onCreate login");
             mLoginHeloper.iLiveLogin(MySelfInfo.getInstance().getId(), MySelfInfo.getInstance().getUserSig());
         }
 
@@ -112,6 +118,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     private void initView() {
         setContentView(R.layout.activity_independent_login);
+
+        mLoginView = findViewById(R.id.login_view);
+        boolean isUserExit = getIntent().getBooleanExtra(USER_EXIT, false);
+        if (isUserExit) {
+            mLoginView.setVisibility(View.GONE);
+        }
+
         mBtnLogin = (TextView) findViewById(R.id.btn_login);
         mUserName = (EditText) findViewById(R.id.username);
         mPassWord = (EditText) findViewById(R.id.password);
@@ -127,7 +140,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
      * @return true 代表需要重新登录
      */
     public boolean needLogin() {
-        if (MySelfInfo.getInstance().getId() != null && !MySelfInfo.getInstance().isLogout()) {
+        Log.d(TAG, "wzw id:" + MySelfInfo.getInstance().getId() + "logout:" + MySelfInfo.getInstance().isLogout());
+        if (MySelfInfo.getInstance().getId() != null) {
+            if (MySelfInfo.getInstance().isLogout()) {
+                return true; //
+            }
             return false;//有账号不需要登录
         } else {
             return true;//需要登录
@@ -182,6 +199,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     .show();
         } else {
             Toast.makeText(LoginActivity.this, errorinfo, Toast.LENGTH_SHORT).show();
+            mLoginView.setVisibility(View.GONE);
         }
 
     }

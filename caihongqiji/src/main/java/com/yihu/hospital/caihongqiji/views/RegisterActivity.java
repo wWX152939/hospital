@@ -114,11 +114,19 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         }
         if (view.getId() == R.id.back) {
             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+            intent.putExtra(LoginActivity.USER_EXIT, true);
             startActivity(intent);
             finish();
         } else if (view.getId() == R.id.login_view) {
             jumpIntoHomeActivity();
         }
+    }
+
+    public void onBackPressed() {
+        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+        intent.putExtra(LoginActivity.USER_EXIT, true);
+        startActivity(intent);
+        finish();
     }
 
     @Override

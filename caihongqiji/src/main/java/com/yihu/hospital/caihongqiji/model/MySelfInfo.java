@@ -191,7 +191,7 @@ public class MySelfInfo {
             logLevel = SxbLog.SxbLogLevel.values()[level];
         }
         SxbLog.setLogLevel(logLevel);
-        SxbLog.i(TAG, " getCache id: " + id);
+        Log.i(TAG, " getCache id: " + id);
     }
 
     public int getIdStatus() {
